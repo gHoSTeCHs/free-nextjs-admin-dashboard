@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import React from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
 import StatisticsChart from "@/components/ecommerce/StatisticsChart";
 import RecentOrders from "@/components/ecommerce/RecentOrders";
 import DemographicCard from "@/components/ecommerce/DemographicCard";
 import { StakingMetrics } from "@/components/staking/StakingMetrics";
+import StakingRewardsChart from "@/components/staking/StakingRewardsChart";
 
 export const metadata: Metadata = {
   title:
@@ -19,7 +19,7 @@ export default function Ecommerce() {
       <div className="col-span-12 space-y-6 xl:col-span-7">
         
         <StakingMetrics/>
-        <MonthlySalesChart />
+        <StakingRewardsChart/>
       </div>
 
       <div className="col-span-12 xl:col-span-5">
