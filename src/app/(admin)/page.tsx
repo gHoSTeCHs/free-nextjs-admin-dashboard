@@ -1,41 +1,41 @@
 import type { Metadata } from "next";
 import React from "react";
-import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
-import StatisticsChart from "@/components/ecommerce/StatisticsChart";
-import RecentOrders from "@/components/ecommerce/RecentOrders";
-import DemographicCard from "@/components/ecommerce/DemographicCard";
 import { StakingMetrics } from "@/components/staking/StakingMetrics";
 import StakingRewardsChart from "@/components/staking/StakingRewardsChart";
+import StakingTarget from "@/components/staking/StakingTarget";
+import PerfomanceChart from "@/components/staking/PerformanceChart";
+import StakingGeographyCard from "@/components/staking/StakingGeographyCard";
+import RecentStakes from "@/components/staking/RecentStakes";
 
 export const metadata: Metadata = {
   title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
+    "NodeRevert",
+  description: "Triple emcrypted crypto recovery vault",
 };
 
-export default function Ecommerce() {
+export default function StakingDashboard() {
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
       <div className="col-span-12 space-y-6 xl:col-span-7">
-        
-        <StakingMetrics/>
-        <StakingRewardsChart/>
+        <StakingMetrics />
+
+        <StakingRewardsChart />
       </div>
 
       <div className="col-span-12 xl:col-span-5">
-        <MonthlyTarget />
+        <StakingTarget />
       </div>
 
       <div className="col-span-12">
-        <StatisticsChart />
+        <PerfomanceChart />
       </div>
 
       <div className="col-span-12 xl:col-span-5">
-        <DemographicCard />
+        <StakingGeographyCard />
       </div>
 
       <div className="col-span-12 xl:col-span-7">
-        <RecentOrders />
+        <RecentStakes />
       </div>
     </div>
   );
