@@ -4,14 +4,14 @@
  * @type {string[]}
  */
 
-export const publicRoutes: string[] = ['/'];
+export const publicRoutes: string[] = [''];
 
 /**
  * An array of routes used for authentication.
  * These routes will redirect logged-in users to /settings.
  * @type {string[]}
  */
-export const authRoutes: string[] = ['/auth/login', '/auth/register'];
+export const authRoutes: string[] = ['/signin','/signup'];
 
 /**
  * The prefix used for API authentication routes.
