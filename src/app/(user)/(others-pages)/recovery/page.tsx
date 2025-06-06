@@ -635,7 +635,7 @@ export default function CryptoRecoveryPage() {
                   Security Notice
                 </p>
                 <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
-                  Your recovery information will be processed securely. Never share your recovery phrase with unauthorized parties.
+                  This process is protected by end to end encryption. Your recovery information will be processed securely.
                 </p>
               </div>
             </div>

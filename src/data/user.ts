@@ -4,7 +4,13 @@ import { db } from '@/lib/db';
 export const getUserByEmail = async (email: string) => {
 	try {
 		const user = db.user.findUnique({
-			where: { email },
+			where: { email }, select: {
+        id: true,
+        email: true,
+        name: true,
+        password: true,
+				role: true
+      }
 		});
 
 		return user;

@@ -1,4 +1,3 @@
-"use client";
 
 import { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
@@ -10,5 +9,9 @@ interface Props {
 }
 
 export default function AuthSessionProvider({ children, session }: Props) {
-  return <SessionProvider session={session}>{children}</SessionProvider>;
+  return <SessionProvider session={session}
+    refetchInterval={5 * 60}
+    refetchOnWindowFocus={true}
+      refetchWhenOffline={false}
+  >{children}</SessionProvider>;
 }

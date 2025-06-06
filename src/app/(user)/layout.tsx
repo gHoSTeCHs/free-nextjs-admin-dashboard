@@ -7,7 +7,7 @@ import Backdrop from "@/layout/Backdrop";
 import AuthSessionProvider from "@/providers/SessionProvider";
 import React from "react";
 
-export default function AdminLayout({
+export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;

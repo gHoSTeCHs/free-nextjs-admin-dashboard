@@ -25,3 +25,9 @@ export const apiAuthPrefix: string = '/api/auth';
  * @type {string}
  */
 export const DEFAULT_LOGIN_REDIRECT: string = '/';
+
+/**   
+ * These are the routes that are only accessible if the user is an admin 
+ * @type {string[]} 
+*/
+export const adminRoutes: string[] = ['/admin/dashboard', '/admin/users', '/admin/settings', '/admin/analytics']; 
