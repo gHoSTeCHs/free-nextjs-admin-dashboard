@@ -47,6 +47,65 @@ model Account {
   @@map("accounts")
 }
 
+enum STATUS {
+  PENDING
+  COMPLETED
+  INPROGRESS
+}
+
+enum PRIORITY {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+model Case {
+  id              String   @id @default(uuid())
+  title           String
+  status          STATUS   @default(INPROGRESS)
+  assetsToRecover Int
+  totalValue      Int
+  lastKnownValue  Int
+  recoveryMethods Int
+  createdDate     DateTime
+  lastUpdated     DateTime
+  priority        PRIORITY @default(HIGH)
+
+  recoveryAssets RecoveryAsset[]
+}
+
+enum WALLET_TYPE {
+  Hardware_Wallet
+  MetaMask
+  Phantom_Wallet
+}
+
+enum ASSET_STATUS {
+  Inaccessible
+  Lost_Access
+  Forgotten_Password
+}
+
+enum RECOVERY_METHOD {
+  Seed_Phrase
+  Private_Key
+  Security_Questions
+}
+
+model RecoveryAsset {
+  id            String       @id @default(cuid())
+  case_id       String
+  case          Case         @relation(fields: [case_id], references: [id])
+  asset         String
+  symbol        String
+  amount        Int
+  currentValue  Int
+  lastKnowPrice Int
+  wallet        WALLET_TYPE  @default(MetaMask)
+  lastAccessed  DateTime
+  status        ASSET_STATUS @default(Inaccessible)
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
