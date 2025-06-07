@@ -14,6 +14,7 @@ import {
 	Key,
 	Wallet,
 } from 'lucide-react';
+import Link from 'next/link';
 
 type CaseStatus = 'pending' | 'in-progress' | 'completed' | 'failed';
 type CasePriority = 'low' | 'medium' | 'high';
@@ -137,12 +138,12 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 						/>
 					</div>
 
-					<button
-						onClick={onCreateCase}
+					<Link
+						href="/admincase"
 						className="flex items-center space-x-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors whitespace-nowrap">
 						<Plus className="w-4 h-4" />
 						<span>New Case</span>
-					</button>
+					</Link>
 				</div>
 			</div>
 

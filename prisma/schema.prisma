@@ -51,12 +51,14 @@ enum STATUS {
   PENDING
   COMPLETED
   INPROGRESS
+  CANCELLED
 }
 
 enum PRIORITY {
   HIGH
   MEDIUM
   LOW
+  URGENT
 }
 
 model Case {
@@ -78,6 +80,10 @@ enum WALLET_TYPE {
   Hardware_Wallet
   MetaMask
   Phantom_Wallet
+  Trust_Wallet
+  Coinbase_Wallet
+  WalletConnect
+  Other
 }
 
 enum ASSET_STATUS {
@@ -87,23 +93,26 @@ enum ASSET_STATUS {
 }
 
 enum RECOVERY_METHOD {
-  Seed_Phrase
+  Seed_Phrase_Lost
   Private_Key
   Security_Questions
+  Lost_Access
+  Hardware_Damaged
+  Exchange_Locked
 }
 
 model RecoveryAsset {
-  id            String       @id @default(cuid())
-  case_id       String
-  case          Case         @relation(fields: [case_id], references: [id])
-  asset         String
-  symbol        String
-  amount        Int
-  currentValue  Int
-  lastKnowPrice Int
-  wallet        WALLET_TYPE  @default(MetaMask)
-  lastAccessed  DateTime
-  status        ASSET_STATUS @default(Inaccessible)
+  id             String       @id @default(cuid())
+  case_id        String
+  case           Case         @relation(fields: [case_id], references: [id])
+  asset          String
+  symbol         String
+  amount         Int
+  currentValue   Int
+  lastKnownPrice Int
+  wallet         WALLET_TYPE  @default(MetaMask)
+  lastAccessed   DateTime
+  status         ASSET_STATUS @default(Inaccessible)
 }
 
 datasource db {
