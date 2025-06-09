@@ -66,8 +66,8 @@ model Case {
   title           String
   status          STATUS   @default(INPROGRESS)
   assetsToRecover Int
-  totalValue      Int
-  lastKnownValue  Int
+  totalValue      Float
+  lastKnownValue  Float
   recoveryMethods Int
   createdDate     DateTime
   lastUpdated     DateTime
@@ -107,9 +107,9 @@ model RecoveryAsset {
   case           Case         @relation(fields: [case_id], references: [id])
   asset          String
   symbol         String
-  amount         Int
-  currentValue   Int
-  lastKnownPrice Int
+  amount         Float
+  currentValue   Float
+  lastKnownPrice Float
   wallet         WALLET_TYPE  @default(MetaMask)
   lastAccessed   DateTime
   status         ASSET_STATUS @default(Inaccessible)

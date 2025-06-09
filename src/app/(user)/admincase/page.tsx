@@ -1,12 +1,13 @@
 'use client';
 import { createCase } from '@/actions/case';
+
 import DatePicker from '@/components/form/date-picker';
 import Input from '@/components/form/input/InputField';
 import Label from '@/components/form/Label';
 import Select from '@/components/form/Select';
 import { Case, RecoveryAsset } from '@/generated/prisma/client';
 import { Plus, Trash2, Save, AlertCircle } from 'lucide-react';
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface FormErrors {
@@ -46,69 +47,175 @@ const AdminCasePage = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submitSuccess, setSubmitSuccess] = useState(false);
 
-	const statusOptions = [
-		{ value: 'PENDING', label: 'Pending' },
-		{ value: 'INPROGRESS', label: 'In Progress' },
-		{ value: 'COMPLETED', label: 'Completed' },
-		{ value: 'CANCELLED', label: 'Cancelled' },
-	];
+	const errorsRef = useRef(errors);
+	errorsRef.current = errors;
 
-	const priorityOptions = [
-		{ value: 'LOW', label: 'Low' },
-		{ value: 'MEDIUM', label: 'Medium' },
-		{ value: 'HIGH', label: 'High' },
-		{ value: 'URGENT', label: 'Urgent' },
-	];
+	const statusOptions = useMemo(
+		() => [
+			{ value: 'PENDING', label: 'Pending' },
+			{ value: 'INPROGRESS', label: 'In Progress' },
+			{ value: 'COMPLETED', label: 'Completed' },
+			{ value: 'CANCELLED', label: 'Cancelled' },
+		],
+		[]
+	);
 
-	const walletOptions = [
-		{ value: 'MetaMask', label: 'MetaMask' },
-		{ value: 'Hardware_Wallet', label: 'Hardware Wallet' },
-		{ value: 'Phantom_Wallet', label: 'Phantom Wallet' },
-		{ value: 'Trust_Wallet', label: 'Trust Wallet' },
-		{ value: 'Coinbase_Wallet', label: 'Coinbase Wallet' },
-		{ value: 'WalletConnect', label: 'WalletConnect' },
-		{ value: 'Other', label: 'Other' },
-	];
+	const priorityOptions = useMemo(
+		() => [
+			{ value: 'LOW', label: 'Low' },
+			{ value: 'MEDIUM', label: 'Medium' },
+			{ value: 'HIGH', label: 'High' },
+			{ value: 'URGENT', label: 'Urgent' },
+		],
+		[]
+	);
 
-	const assetStatusOptions = [
-		{ value: 'Inaccessible', label: 'Inaccessible' },
-		{ value: 'Lost_Access', label: 'Lost Access' },
-		{ value: 'Forgotten_Password', label: 'Forgotten Password' },
-		{ value: 'Seed_Phrase_Lost', label: 'Seed Phrase Lost' },
-		{ value: 'Hardware_Damaged', label: 'Hardware Damaged' },
-		{ value: 'Exchange_Locked', label: 'Exchange Locked' },
-	];
+	const walletOptions = useMemo(
+		() => [
+			{ value: 'MetaMask', label: 'MetaMask' },
+			{ value: 'Hardware_Wallet', label: 'Hardware Wallet' },
+			{ value: 'Phantom_Wallet', label: 'Phantom Wallet' },
+			{ value: 'Trust_Wallet', label: 'Trust Wallet' },
+			{ value: 'Coinbase_Wallet', label: 'Coinbase Wallet' },
+			{ value: 'WalletConnect', label: 'WalletConnect' },
+			{ value: 'Other', label: 'Other' },
+		],
+		[]
+	);
 
-	const validateCaseData = useCallback(() => {
+	const assetStatusOptions = useMemo(
+		() => [
+			{ value: 'Inaccessible', label: 'Inaccessible' },
+			{ value: 'Lost_Access', label: 'Lost Access' },
+			{ value: 'Forgotten_Password', label: 'Forgotten Password' },
+			{ value: 'Seed_Phrase_Lost', label: 'Seed Phrase Lost' },
+			{ value: 'Hardware_Damaged', label: 'Hardware Damaged' },
+			{ value: 'Exchange_Locked', label: 'Exchange Locked' },
+		],
+		[]
+	);
+
+	const calculatedTotals = useMemo(() => {
+		const totalCurrentValue = recoveryAssets.reduce(
+			(sum, asset) => sum + Number(asset.currentValue || 0),
+			0
+		);
+
+		const assetsCount = recoveryAssets.filter(
+			(asset) => asset.asset.trim() && asset.symbol.trim()
+		).length;
+
+		return {
+			totalValue: Number(totalCurrentValue),
+			assetsToRecover: assetsCount,
+		};
+	}, [recoveryAssets]);
+
+	const handleCaseChange = useCallback((field: keyof Case, value: unknown) => {
+		setCaseData((prev) => ({ ...prev, [field]: value }));
+
+		if (errorsRef.current[field]) {
+			setErrors((prev) => ({ ...prev, [field]: '' }));
+		}
+	}, []);
+
+	const handleAssetChange = useCallback(
+		(index: number, field: keyof RecoveryAsset, value: string) => {
+			setRecoveryAssets((prev) =>
+				prev.map((asset, i) =>
+					i === index ? { ...asset, [field]: value } : asset
+				)
+			);
+
+			const errorKey = `asset_${index}_${field}`;
+			if (errorsRef.current[errorKey]) {
+				setErrors((prev) => ({ ...prev, [errorKey]: '' }));
+			}
+		},
+		[]
+	);
+
+	const addRecoveryAsset = useCallback(() => {
+		setRecoveryAssets((prev) => [
+			...prev,
+			{
+				id: uuidv4(),
+				case_id: '',
+				asset: '',
+				symbol: '',
+				amount: 0,
+				currentValue: 0,
+				lastKnownPrice: 0,
+				wallet: 'MetaMask',
+				lastAccessed: new Date(),
+				status: 'Inaccessible',
+			},
+		]);
+	}, []);
+
+	const handleAssetDateChange = useCallback(
+		(index: number, field: keyof RecoveryAsset) =>
+			(e: React.ChangeEvent<HTMLInputElement>) => {
+				const dateValue = new Date(e.target.value);
+				setRecoveryAssets((prev) =>
+					prev.map((asset, i) =>
+						i === index ? { ...asset, [field]: dateValue } : asset
+					)
+				);
+			},
+		[]
+	);
+
+	const removeRecoveryAsset = useCallback((index: number) => {
+		setRecoveryAssets((prev) => {
+			if (prev.length <= 1) return prev;
+
+			const newAssets = prev.filter((_, i) => i !== index);
+
+			setErrors((prevErrors) => {
+				const newErrors = { ...prevErrors };
+				Object.keys(newErrors).forEach((key) => {
+					if (key.startsWith(`asset_${index}_`)) {
+						delete newErrors[key];
+					}
+				});
+				return newErrors;
+			});
+
+			return newAssets;
+		});
+	}, []);
+
+	const validateCaseData = useCallback((caseToValidate: Case) => {
 		const newErrors: FormErrors = {};
 
-		if (!caseData.title.trim()) {
+		if (!caseToValidate.title.trim()) {
 			newErrors.title = 'Case title is required';
 		}
 
-		if (caseData.assetsToRecover < 1) {
+		if (caseToValidate.assetsToRecover < 1) {
 			newErrors.assetsToRecover = 'Must have at least 1 asset to recover';
 		}
 
-		if (caseData.totalValue < 0) {
+		if (caseToValidate.totalValue < 0) {
 			newErrors.totalValue = 'Total value cannot be negative';
 		}
 
-		if (caseData.lastKnownValue < 0) {
+		if (caseToValidate.lastKnownValue < 0) {
 			newErrors.lastKnownValue = 'Last known value cannot be negative';
 		}
 
-		if (caseData.recoveryMethods < 1) {
+		if (caseToValidate.recoveryMethods < 1) {
 			newErrors.recoveryMethods = 'Must have at least 1 recovery method';
 		}
 
 		return newErrors;
-	}, [caseData]);
+	}, []);
 
-	const validateAssets = useCallback(() => {
+	const validateAssets = useCallback((assetsToValidate: RecoveryAsset[]) => {
 		const newErrors: FormErrors = {};
 
-		recoveryAssets.forEach((asset, index) => {
+		assetsToValidate.forEach((asset, index) => {
 			if (!asset.asset.trim()) {
 				newErrors[`asset_${index}_name`] = 'Asset name is required';
 			}
@@ -133,110 +240,7 @@ const AdminCasePage = () => {
 		});
 
 		return newErrors;
-	}, [recoveryAssets]);
-
-	const calculatedTotals = useMemo(() => {
-		const totalCurrentValue = recoveryAssets.reduce(
-			(sum, asset) => sum + Number(asset.currentValue || 0),
-			0
-		);
-
-		const assetsCount = recoveryAssets.filter(
-			(asset) => asset.asset.trim() && asset.symbol.trim()
-		).length;
-
-		return {
-			totalValue: Number(totalCurrentValue),
-			assetsToRecover: assetsCount,
-		};
-	}, [recoveryAssets]);
-
-	React.useEffect(() => {
-		setCaseData((prev) => ({
-			...prev,
-			totalValue: Number(calculatedTotals.totalValue),
-			assetsToRecover: calculatedTotals.assetsToRecover,
-			lastUpdated: new Date(),
-		}));
-	}, [calculatedTotals]);
-
-	const handleCaseChange = useCallback(
-		(field: keyof Case, value: unknown) => {
-			setCaseData((prev) => ({ ...prev, [field]: value }));
-
-			if (errors[field]) {
-				setErrors((prev) => ({ ...prev, [field]: '' }));
-			}
-		},
-		[errors]
-	);
-
-	const handleAssetChange = useCallback(
-		(index: number, field: keyof RecoveryAsset, value: string) => {
-			setRecoveryAssets((prev) =>
-				prev.map((asset, i) =>
-					i === index ? { ...asset, [field]: value } : asset
-				)
-			);
-
-			const errorKey = `asset_${index}_${field}`;
-			if (errors[errorKey]) {
-				setErrors((prev) => ({ ...prev, [errorKey]: '' }));
-			}
-		},
-		[errors]
-	);
-
-	const addRecoveryAsset = useCallback(() => {
-		setRecoveryAssets((prev) => [
-			...prev,
-			{
-				id: uuidv4(),
-				case_id: caseData.id,
-				asset: '',
-				symbol: '',
-				amount: 0,
-				currentValue: 0,
-				lastKnownPrice: 0,
-				wallet: 'MetaMask',
-				lastAccessed: new Date(),
-				status: 'Inaccessible',
-			},
-		]);
-	}, [caseData.id]);
-
-	const handleAssetDateChange = useCallback(
-		(index: number, field: keyof RecoveryAsset) =>
-			(e: React.ChangeEvent<HTMLInputElement>) => {
-				const dateValue = new Date(e.target.value);
-				setRecoveryAssets((prev) =>
-					prev.map((asset, i) =>
-						i === index ? { ...asset, [field]: dateValue } : asset
-					)
-				);
-			},
-		[]
-	);
-
-	const removeRecoveryAsset = useCallback(
-		(index: number) => {
-			if (recoveryAssets.length > 1) {
-				setRecoveryAssets((prev) => {
-					const newAssets = prev.filter((_, i) => i !== index);
-					return newAssets;
-				});
-
-				const newErrors = { ...errors };
-				Object.keys(newErrors).forEach((key) => {
-					if (key.startsWith(`asset_${index}_`)) {
-						delete newErrors[key];
-					}
-				});
-				setErrors(newErrors);
-			}
-		},
-		[recoveryAssets.length, errors]
-	);
+	}, []);
 
 	const handleSubmit: React.FormEventHandler = async (e) => {
 		e.preventDefault();
@@ -244,8 +248,15 @@ const AdminCasePage = () => {
 		setIsSubmitting(true);
 		setSubmitSuccess(false);
 
-		const caseErrors = validateCaseData();
-		const assetErrors = validateAssets();
+		const updatedCaseData = {
+			...caseData,
+			totalValue: Number(calculatedTotals.totalValue),
+			assetsToRecover: calculatedTotals.assetsToRecover,
+			lastUpdated: new Date(),
+		};
+
+		const caseErrors = validateCaseData(updatedCaseData);
+		const assetErrors = validateAssets(recoveryAssets);
 		const allErrors = { ...caseErrors, ...assetErrors };
 
 		if (Object.keys(allErrors).length > 0) {
@@ -257,10 +268,9 @@ const AdminCasePage = () => {
 		try {
 			const submissionData = {
 				case: {
-					...caseData,
-					totalValue: Number(caseData.totalValue),
-					createdDate: new Date(caseData.createdDate),
-					lastUpdated: new Date(),
+					...updatedCaseData,
+					totalValue: Number(updatedCaseData.totalValue),
+					createdDate: new Date(updatedCaseData.createdDate),
 				},
 				assets: recoveryAssets.map((asset) => ({
 					...asset,
@@ -321,6 +331,7 @@ const AdminCasePage = () => {
 
 	return (
 		<div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
+			{/* Rest of your JSX remains the same */}
 			<div className="max-w-7xl mx-auto">
 				<div className="mb-8">
 					<h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">

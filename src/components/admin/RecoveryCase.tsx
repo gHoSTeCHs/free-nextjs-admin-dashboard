@@ -15,25 +15,10 @@ import {
 	Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
-
-type CaseStatus = 'pending' | 'in-progress' | 'completed' | 'failed';
-type CasePriority = 'low' | 'medium' | 'high';
-
-interface RecoveryCase {
-	caseId: string;
-	title: string;
-	status: CaseStatus;
-	assetsToRecover: number;
-	totalValue: number;
-	lastKnownValue: number;
-	recoveryMethods: number;
-	createdDate: string;
-	lastUpdated: string;
-	priority: CasePriority;
-}
+import { Case, PRIORITY, STATUS } from '@/generated/prisma/client';
 
 interface RecoveryCasesSectionProps {
-	cases: RecoveryCase[];
+	cases: Case[];
 	onViewCase?: (caseId: string) => void;
 	onEditCase?: (caseId: string) => void;
 	onCreateCase?: () => void;
@@ -47,16 +32,13 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 }) => {
 	const [searchCaseId, setSearchCaseId] = useState('');
 
-	// Properly sync filteredCases with cases prop changes
 	const filteredCases = useMemo(() => {
 		if (searchCaseId.trim() === '') {
 			return cases;
 		}
 		return cases.filter(
 			(recoveryCase) =>
-				recoveryCase.caseId
-					.toLowerCase()
-					.includes(searchCaseId.toLowerCase()) ||
+				recoveryCase.id.toLowerCase().includes(searchCaseId.toLowerCase()) ||
 				recoveryCase.title.toLowerCase().includes(searchCaseId.toLowerCase())
 		);
 	}, [cases, searchCaseId]);
@@ -73,44 +55,46 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 		setSearchCaseId(caseId);
 	};
 
-	const getStatusIcon = (status: CaseStatus): JSX.Element => {
+	const getStatusIcon = (status: STATUS): JSX.Element => {
 		switch (status) {
-			case 'completed':
+			case 'COMPLETED':
 				return <CheckCircle className="w-4 h-4 text-green-500" />;
-			case 'in-progress':
+			case 'INPROGRESS':
 				return <Clock className="w-4 h-4 text-blue-500" />;
-			case 'failed':
+			case 'CANCELLED':
 				return <XCircle className="w-4 h-4 text-red-500" />;
-			case 'pending':
+			case 'PENDING':
 				return <AlertCircle className="w-4 h-4 text-yellow-500" />;
 		}
 	};
 
-	const getStatusColor = (status: CaseStatus): string => {
+	const getStatusColor = (status: STATUS): string => {
 		switch (status) {
-			case 'completed':
+			case 'CANCELLED':
 				return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
-			case 'in-progress':
+			case 'COMPLETED':
 				return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400';
-			case 'failed':
+			case 'INPROGRESS':
 				return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
-			case 'pending':
+			case 'PENDING':
 				return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
 		}
 	};
 
-	const getPriorityColor = (priority: CasePriority): string => {
+	const getPriorityColor = (priority: PRIORITY): string => {
 		switch (priority) {
-			case 'high':
+			case 'HIGH':
 				return 'border-l-red-500';
-			case 'medium':
+			case 'MEDIUM':
 				return 'border-l-yellow-500';
-			case 'low':
+			case 'LOW':
 				return 'border-l-green-500';
+			default:
+				return 'border-l-gray-500';
 		}
 	};
 
-	const formatStatus = (status: CaseStatus): string => {
+	const formatStatus = (status: STATUS): string => {
 		return status.replace('-', ' ');
 	};
 
@@ -165,7 +149,7 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 				) : (
 					filteredCases.map((recoveryCase) => (
 						<div
-							key={recoveryCase.caseId}
+							key={recoveryCase.id}
 							className={`border-l-4 ${getPriorityColor(
 								recoveryCase.priority
 							)} bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow`}>
@@ -182,7 +166,7 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 											</span>
 										</div>
 										<span className="text-xs text-gray-500 dark:text-gray-400 font-mono">
-											ID: {recoveryCase.caseId}
+											ID: {recoveryCase.id}
 										</span>
 									</div>
 
@@ -232,7 +216,9 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 												Last Updated
 											</p>
 											<p className="text-sm font-medium text-gray-900 dark:text-white">
-												{recoveryCase.lastUpdated}
+												{new Date(
+													recoveryCase.lastUpdated
+												).toLocaleDateString()}
 											</p>
 										</div>
 									</div>
@@ -240,13 +226,13 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 
 								<div className="flex items-center space-x-2 ml-4">
 									<button
-										onClick={() => onViewCase?.(recoveryCase.caseId)}
+										onClick={() => onViewCase?.(recoveryCase.id)}
 										className="p-2 text-gray-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
 										title="View Case Details">
 										<Eye className="w-4 h-4" />
 									</button>
 									<button
-										onClick={() => onEditCase?.(recoveryCase.caseId)}
+										onClick={() => onEditCase?.(recoveryCase.id)}
 										className="p-2 text-gray-500 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
 										title="Edit Case">
 										<Edit className="w-4 h-4" />
