@@ -173,3 +173,5 @@ export async function createCase(values: CreateCaseValues) {
 		};
 	}
 }
+
+export async function updateCase() {}

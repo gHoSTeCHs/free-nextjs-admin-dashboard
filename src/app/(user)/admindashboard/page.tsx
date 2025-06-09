@@ -1,20 +1,17 @@
 'use client';
 import AdminUserStats from '@/components/admin/AdminUserStats';
 import RecoveryCasesSection from '@/components/admin/RecoveryCase';
-import { Case } from '@/generated/prisma/client';
+import { CaseWithAssets } from '@/types';
 import React, { useEffect, useState } from 'react';
 
 const AdminDashboard = () => {
-	const [cases, setCases] = useState<Case[]>([]);
+	const [cases, setCases] = useState<CaseWithAssets[]>([]);
+	// const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
 
 	const mockUserStatsData = {
 		totalUsers: 47832,
 		userGrowth: 8.5,
 		userGrowthAmount: 3764,
-	};
-
-	const handleViewCase = (caseId: string): void => {
-		console.log('Viewing case:', caseId);
 	};
 
 	const handleEditCase = (caseId: string): void => {
@@ -50,7 +47,6 @@ const AdminDashboard = () => {
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
 						<RecoveryCasesSection
 							cases={cases}
-							onViewCase={handleViewCase}
 							onEditCase={handleEditCase}
 							onCreateCase={handleCreateCase}
 						/>

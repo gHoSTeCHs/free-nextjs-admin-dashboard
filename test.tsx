@@ -15,12 +15,11 @@ import {
 	Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
-import { PRIORITY, STATUS } from '@/generated/prisma/client';
-import ViewCaseModal from './ViewCase';
-import { CaseWithAssets } from '@/types';
+import { Case, PRIORITY, STATUS } from '@/generated/prisma/client';
+import ViewCaseModal from './ViewCaseModal'; // Import the ViewCaseModal component
 
 interface RecoveryCasesSectionProps {
-	cases: CaseWithAssets[];
+	cases: Case[];
 	onViewCase?: (caseId: string) => void;
 	onEditCase?: (caseId: string) => void;
 	onCreateCase?: () => void;
@@ -33,7 +32,7 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 	onCreateCase,
 }) => {
 	const [searchCaseId, setSearchCaseId] = useState('');
-	const [selectedCase, setSelectedCase] = useState<CaseWithAssets | null>(null);
+	const [selectedCase, setSelectedCase] = useState<Case | null>(null);
 	const [isViewModalOpen, setIsViewModalOpen] = useState(false);
 
 	const filteredCases = useMemo(() => {
@@ -65,7 +64,7 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 			setSelectedCase(caseToView);
 			setIsViewModalOpen(true);
 		}
-
+		// Also call the parent callback if provided
 		onViewCase?.(caseId);
 	};
 
@@ -219,60 +218,4 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 												</div>
 											</div>
 
-											<div className="flex items-center space-x-2">
-												<Key className="w-4 h-4 text-purple-500" />
-												<div>
-													<p className="text-xs text-gray-500 dark:text-gray-400">
-														Methods
-													</p>
-													<p className="text-sm font-medium text-gray-900 dark:text-white">
-														{recoveryCase.recoveryMethods}
-													</p>
-												</div>
-											</div>
-
-											<div>
-												<p className="text-xs text-gray-500 dark:text-gray-400">
-													Last Updated
-												</p>
-												<p className="text-sm font-medium text-gray-900 dark:text-white">
-													{new Date(
-														recoveryCase.lastUpdated
-													).toLocaleDateString()}
-												</p>
-											</div>
-										</div>
-									</div>
-
-									<div className="flex items-center space-x-2 ml-4">
-										<button
-											onClick={() => handleViewCase(recoveryCase.id)}
-											className="p-2 text-gray-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
-											title="View Case Details">
-											<Eye className="w-4 h-4" />
-										</button>
-										<button
-											onClick={() => onEditCase?.(recoveryCase.id)}
-											className="p-2 text-gray-500 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
-											title="Edit Case">
-											<Edit className="w-4 h-4" />
-										</button>
-									</div>
-								</div>
-							</div>
-						))
-					)}
-				</div>
-			</div>
-
-			{/* View Case Modal */}
-			<ViewCaseModal
-				isOpen={isViewModalOpen}
-				onClose={handleCloseViewModal}
-				case={selectedCase}
-			/>
-		</>
-	);
-};
-
-export default RecoveryCasesSection;
+											<div className="flex items-center space-x-2"></div>
