@@ -501,7 +501,7 @@ const EditCaseModal: React.FC<EditCaseModalProps> = ({
 								<Label htmlFor="edit-createdDate">Created Date</Label>
 								<DatePicker
 									placeholder="Select case creation date"
-									value={editedCase.createdDate.toISOString().slice(0, 16)}
+									value={new Date(editedCase.createdDate).toLocaleDateString()}
 									onChange={(e) =>
 										handleCaseChange('createdDate', new Date(e.target.value))
 									}
@@ -710,7 +710,7 @@ const EditCaseModal: React.FC<EditCaseModalProps> = ({
 										<Label>Last Accessed</Label>
 										<DatePicker
 											placeholder="Select last accessed date"
-											value={asset.lastAccessed.toISOString().slice(0, 16)}
+											value={new Date(asset.lastAccessed).toLocaleDateString()}
 											onChange={handleAssetDateChange(index, 'lastAccessed')}
 											id={`edit_lastAccessed_${index}`}
 										/>

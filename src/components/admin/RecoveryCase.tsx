@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { PRIORITY, STATUS } from '@/generated/prisma/client';
 import ViewCaseModal from './ViewCase';
 import { CaseWithAssets } from '@/types';
+import EditCaseModal from './EditCase';
 
 interface RecoveryCasesSectionProps {
 	cases: CaseWithAssets[];
@@ -35,6 +36,7 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 	const [searchCaseId, setSearchCaseId] = useState('');
 	const [selectedCase, setSelectedCase] = useState<CaseWithAssets | null>(null);
 	const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+	const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
 
 	const filteredCases = useMemo(() => {
 		if (searchCaseId.trim() === '') {
@@ -69,8 +71,22 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 		onViewCase?.(caseId);
 	};
 
+	const handleEditCase = (caseId: string): void => {
+		const caseToEdit = cases.find((c) => c.id === caseId);
+		if (caseToEdit) {
+			setSelectedCase(caseToEdit);
+			setIsEditModalOpen(true);
+		}
+		onEditCase?.(caseId);
+	};
+
 	const handleCloseViewModal = (): void => {
 		setIsViewModalOpen(false);
+		setSelectedCase(null);
+	};
+
+	const handleCloseEditModal = (): void => {
+		setIsEditModalOpen(false);
 		setSelectedCase(null);
 	};
 
@@ -252,7 +268,7 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 											<Eye className="w-4 h-4" />
 										</button>
 										<button
-											onClick={() => onEditCase?.(recoveryCase.id)}
+											onClick={() => handleEditCase(recoveryCase.id)}
 											className="p-2 text-gray-500 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors"
 											title="Edit Case">
 											<Edit className="w-4 h-4" />
@@ -269,6 +285,12 @@ const RecoveryCasesSection: React.FC<RecoveryCasesSectionProps> = ({
 			<ViewCaseModal
 				isOpen={isViewModalOpen}
 				onClose={handleCloseViewModal}
+				case={selectedCase}
+			/>
+
+			<EditCaseModal
+				isOpen={isEditModalOpen}
+				onClose={handleCloseEditModal}
 				case={selectedCase}
 			/>
 		</>

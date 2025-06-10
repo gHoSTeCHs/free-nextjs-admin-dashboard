@@ -17,7 +17,7 @@ interface InputProps {
 	success?: boolean;
 	error?: boolean;
 	hint?: string; // Optional hint text
-	required?: boolean; // Added for react-hook-form compatibility
+	required?: boolean;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
