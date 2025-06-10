@@ -9,8 +9,8 @@ export interface AuthToken {
 	token: string;
 	caseId: string;
 	caseTitle: string;
-	createdAt: string;
-	lastUsed?: string;
+	createdAt: Date;
+	lastUsed?: Date;
 	isActive: boolean;
 }
 

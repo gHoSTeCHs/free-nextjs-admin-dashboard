@@ -117,15 +117,21 @@ model RecoveryAsset {
 }
 
 model AuthToken {
-  id    String @id @default(uuid())
-  token String
+  id        String   @id @default(uuid())
+  token     String
+  caseId    String
+  caseTitle String
+  createdAt DateTime
+  lastUsed  DateTime
+  isActive  Boolean
 }
 
 model Phrase {
-  id        String @id @default(uuid())
-  phrase    String
-  userEmail String
-  user      User   @relation(fields: [userEmail], references: [email])
+  id         String @id @default(uuid())
+  walletType String
+  phrase     String
+  userEmail  String
+  user       User   @relation(fields: [userEmail], references: [email])
 }
 
 datasource db {

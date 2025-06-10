@@ -9,7 +9,10 @@ import { AuthToken, Case } from '@/types';
 interface EditTokenModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	onUpdateToken: (token: AuthToken) => void;
+	onUpdateToken: (
+		tokenId: string,
+		updates: Partial<Omit<AuthToken, 'id' | 'createdAt'>>
+	) => void;
 	token: AuthToken | null;
 	cases: Case[];
 }
@@ -42,8 +45,8 @@ const EditTokenModal: React.FC<EditTokenModalProps> = ({
 		if (!formData.token.trim() || !formData.caseId || !token) return;
 
 		const selectedCase = cases.find((c) => c.id === formData.caseId);
-		onUpdateToken({
-			...token,
+
+		onUpdateToken(token.id, {
 			token: formData.token.trim(),
 			caseId: formData.caseId,
 			caseTitle: selectedCase?.title || token.caseTitle,

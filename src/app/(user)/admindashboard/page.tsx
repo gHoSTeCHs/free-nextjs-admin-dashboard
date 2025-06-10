@@ -29,8 +29,6 @@ const AdminDashboard = () => {
 				const response = await fetch('/api/cases');
 				const data = await response.json();
 				setCases(data);
-
-				console.log('Cases:', data);
 			} catch (error) {
 				console.error('Error fetching cases:', error);
 			}
@@ -51,7 +49,7 @@ const AdminDashboard = () => {
 							onEditCase={handleEditCase}
 							onCreateCase={handleCreateCase}
 						/>
-						<AuthTokensSection />
+						<AuthTokensSection cases={cases} />
 					</div>
 				</main>
 			</div>

@@ -13,17 +13,12 @@ interface Case {
 	title: string;
 }
 
-const mockCases: Case[] = [
-	{ id: 'case-001', title: 'Bitcoin Wallet Recovery' },
-	{ id: 'case-002', title: 'Ethereum Smart Contract Issue' },
-	{ id: 'case-003', title: 'Lost Private Keys Recovery' },
-];
-
 interface AuthTokensSectionProps {
 	onCreateToken?: () => void;
+	cases: Case[];
 }
 
-const AuthTokensSection: React.FC<AuthTokensSectionProps> = () => {
+const AuthTokensSection: React.FC<AuthTokensSectionProps> = ({ cases }) => {
 	const {
 		filteredTokens,
 		searchToken,
@@ -38,6 +33,19 @@ const AuthTokensSection: React.FC<AuthTokensSectionProps> = () => {
 	const [selectedToken, setSelectedToken] = useState<AuthToken | null>(null);
 	const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+	const handleUpdateToken = async (
+		tokenId: string,
+		updates: Partial<Omit<AuthToken, 'id' | 'createdAt'>>
+	) => {
+		try {
+			await updateToken(tokenId, updates);
+			setIsEditModalOpen(false);
+			setSelectedToken(null);
+		} catch (error) {
+			console.error('Failed to update token:', error);
+		}
+	};
 
 	const handleEditToken = (token: AuthToken) => {
 		setSelectedToken(token);
@@ -72,15 +80,18 @@ const AuthTokensSection: React.FC<AuthTokensSectionProps> = () => {
 				isOpen={isCreateModalOpen}
 				onClose={() => setIsCreateModalOpen(false)}
 				onCreateToken={createToken}
-				cases={mockCases}
+				cases={cases}
 			/>
 
 			<EditTokenModal
 				isOpen={isEditModalOpen}
-				onClose={() => setIsEditModalOpen(false)}
-				onUpdateToken={updateToken}
+				onClose={() => {
+					setIsEditModalOpen(false);
+					setSelectedToken(null);
+				}}
+				onUpdateToken={handleUpdateToken}
 				token={selectedToken}
-				cases={mockCases}
+				cases={cases}
 			/>
 		</>
 	);

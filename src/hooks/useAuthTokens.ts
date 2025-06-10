@@ -1,92 +1,281 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { AuthToken } from '@/types';
+import {
+	createAuthToken,
+	updateAuthToken,
+	deleteAuthToken,
+	getAllAuthTokens,
+	getAuthTokensByCase,
+	updateTokenLastUsed,
+	findActiveTokenByString,
+} from '@/actions/authToken';
 
-const mockTokens: AuthToken[] = [
-	{
-		id: '1',
-		token: 'abc123def456',
-		caseId: 'case-001',
-		caseTitle: 'Bitcoin Wallet Recovery',
-		createdAt: '2024-01-15T10:30:00Z',
-		lastUsed: '2024-01-20T14:22:00Z',
-		isActive: true,
-	},
-	{
-		id: '2',
-		token: 'xyz789uvw012',
-		caseId: 'case-002',
-		caseTitle: 'Ethereum Smart Contract Issue',
-		createdAt: '2024-01-10T09:15:00Z',
-		lastUsed: '2024-01-18T11:45:00Z',
-		isActive: false,
-	},
-	{
-		id: '3',
-		token: 'mno345pqr678',
-		caseId: 'case-001',
-		caseTitle: 'Bitcoin Wallet Recovery',
-		createdAt: '2024-01-08T16:20:00Z',
-		isActive: true,
-	},
-];
+interface UseAuthTokensOptions {
+	caseId?: string;
+	activeOnly?: boolean;
+	autoRefresh?: boolean;
+	refreshInterval?: number;
+}
 
-export const useAuthTokens = () => {
-	const [tokens, setTokens] = useState<AuthToken[]>(mockTokens);
+export const useAuthTokens = (options: UseAuthTokensOptions = {}) => {
+	const {
+		caseId,
+		activeOnly = false,
+		autoRefresh = false,
+		refreshInterval = 30000,
+	} = options;
+
+	const [tokens, setTokens] = useState<AuthToken[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState<string | null>(null);
 	const [searchToken, setSearchToken] = useState('');
 	const [copiedTokenId, setCopiedTokenId] = useState<string | null>(null);
 
+	// Filtered tokens based on search
 	const filteredTokens = useMemo(() => {
 		if (searchToken.trim() === '') {
 			return tokens;
 		}
+		const searchLower = searchToken.toLowerCase();
 		return tokens.filter(
 			(token) =>
-				token.token.toLowerCase().includes(searchToken.toLowerCase()) ||
-				token.caseTitle.toLowerCase().includes(searchToken.toLowerCase()) ||
-				token.id.toLowerCase().includes(searchToken.toLowerCase())
+				token.token.toLowerCase().includes(searchLower) ||
+				token.caseTitle.toLowerCase().includes(searchLower) ||
+				token.id.toLowerCase().includes(searchLower) ||
+				token.caseId.toLowerCase().includes(searchLower)
 		);
 	}, [tokens, searchToken]);
 
-	const createToken = (newTokenData: Omit<AuthToken, 'id' | 'createdAt'>) => {
-		const newToken: AuthToken = {
-			...newTokenData,
-			id: Date.now().toString(),
-			createdAt: new Date().toISOString(),
-		};
-		setTokens((prev) => [newToken, ...prev]);
-	};
-
-	const updateToken = (updatedToken: AuthToken) => {
-		setTokens((prev) =>
-			prev.map((token) => (token.id === updatedToken.id ? updatedToken : token))
-		);
-	};
-
-	const deleteToken = (tokenId: string) => {
-		if (confirm('Are you sure you want to delete this token?')) {
-			setTokens((prev) => prev.filter((token) => token.id !== tokenId));
-		}
-	};
-
-	const copyToClipboard = async (token: string, tokenId: string) => {
+	// Fetch tokens function
+	const fetchTokens = useCallback(async () => {
 		try {
-			await navigator.clipboard.writeText(token);
-			setCopiedTokenId(tokenId);
-			setTimeout(() => setCopiedTokenId(null), 2000);
+			setIsLoading(true);
+			setError(null);
+
+			let fetchedTokens: AuthToken[];
+
+			if (caseId) {
+				// Fetch tokens for specific case
+				fetchedTokens = await getAuthTokensByCase(caseId, activeOnly);
+			} else {
+				// Fetch all tokens
+				fetchedTokens = await getAllAuthTokens(activeOnly);
+			}
+
+			setTokens(fetchedTokens);
 		} catch (err) {
-			console.error('Failed to copy token:', err);
+			console.error('Failed to fetch tokens:', err);
+			setError(err instanceof Error ? err.message : 'Failed to fetch tokens');
+		} finally {
+			setIsLoading(false);
 		}
-	};
+	}, [caseId, activeOnly]);
+
+	// Create token function
+	const createToken = useCallback(
+		async (newTokenData: Omit<AuthToken, 'id' | 'createdAt' | 'lastUsed'>) => {
+			try {
+				setError(null);
+				const tokenData = {
+					...newTokenData,
+					createdAt: new Date(),
+					lastUsed: new Date(),
+				};
+
+				const newToken = await createAuthToken(tokenData);
+
+				// Add to local state for immediate UI update
+				setTokens((prev) => [newToken, ...prev]);
+
+				return newToken;
+			} catch (err) {
+				console.error('Failed to create token:', err);
+				const errorMessage =
+					err instanceof Error ? err.message : 'Failed to create token';
+				setError(errorMessage);
+				throw new Error(errorMessage);
+			}
+		},
+		[]
+	);
+
+	// Update token function
+	const updateToken = useCallback(
+		async (
+			tokenId: string,
+			updates: Partial<Omit<AuthToken, 'id' | 'createdAt'>>
+		) => {
+			try {
+				setError(null);
+				const updatedToken = await updateAuthToken(tokenId, updates);
+
+				// Update local state for immediate UI update
+				setTokens((prev) =>
+					prev.map((token) => (token.id === tokenId ? updatedToken : token))
+				);
+
+				return updatedToken;
+			} catch (err) {
+				console.error('Failed to update token:', err);
+				const errorMessage =
+					err instanceof Error ? err.message : 'Failed to update token';
+				setError(errorMessage);
+				throw new Error(errorMessage);
+			}
+		},
+		[]
+	);
+
+	// Delete token function
+	const deleteToken = useCallback(async (tokenId: string) => {
+		try {
+			setError(null);
+			await deleteAuthToken(tokenId);
+
+			// Remove from local state for immediate UI update
+			setTokens((prev) => prev.filter((token) => token.id !== tokenId));
+		} catch (err) {
+			console.error('Failed to delete token:', err);
+			const errorMessage =
+				err instanceof Error ? err.message : 'Failed to delete token';
+			setError(errorMessage);
+			throw new Error(errorMessage);
+		}
+	}, []);
+
+	// Mark token as used (update lastUsed timestamp)
+	const markTokenAsUsed = useCallback(async (tokenId: string) => {
+		try {
+			const updatedToken = await updateTokenLastUsed(tokenId);
+
+			// Update local state
+			setTokens((prev) =>
+				prev.map((token) => (token.id === tokenId ? updatedToken : token))
+			);
+
+			return updatedToken;
+		} catch (err) {
+			console.error('Failed to mark token as used:', err);
+			// Don't throw here as this is often a background operation
+		}
+	}, []);
+
+	// Find active token by token string
+	const findTokenByString = useCallback(async (tokenString: string) => {
+		try {
+			return await findActiveTokenByString(tokenString);
+		} catch (err) {
+			console.error('Failed to find token:', err);
+			return null;
+		}
+	}, []);
+
+	// Copy token to clipboard
+	const copyToClipboard = useCallback(
+		async (token: string, tokenId: string) => {
+			try {
+				await navigator.clipboard.writeText(token);
+				setCopiedTokenId(tokenId);
+
+				// Auto-clear copied state after 2 seconds
+				setTimeout(() => setCopiedTokenId(null), 2000);
+
+				// Optionally mark token as used when copied
+				await markTokenAsUsed(tokenId);
+			} catch (err) {
+				console.error('Failed to copy token:', err);
+				setError('Failed to copy token to clipboard');
+			}
+		},
+		[markTokenAsUsed]
+	);
+
+	// Refresh tokens manually
+	const refreshTokens = useCallback(async () => {
+		await fetchTokens();
+	}, [fetchTokens]);
+
+	// Toggle token active status
+	const toggleTokenStatus = useCallback(
+		async (tokenId: string, isActive: boolean) => {
+			try {
+				await updateToken(tokenId, { isActive });
+			} catch (err) {
+				console.error('Failed to toggle token status:', err);
+				throw err;
+			}
+		},
+		[updateToken]
+	);
+
+	// Get token statistics
+	const tokenStats = useMemo(() => {
+		const total = tokens.length;
+		const active = tokens.filter((t) => t.isActive).length;
+		const inactive = total - active;
+
+		return {
+			total,
+			active,
+			inactive,
+		};
+	}, [tokens]);
+
+	// Initial fetch
+	useEffect(() => {
+		fetchTokens();
+	}, [fetchTokens]);
+
+	// Auto refresh setup
+	useEffect(() => {
+		if (!autoRefresh) return;
+
+		const interval = setInterval(() => {
+			fetchTokens();
+		}, refreshInterval);
+
+		return () => clearInterval(interval);
+	}, [autoRefresh, refreshInterval, fetchTokens]);
+
+	// Clear error after some time
+	useEffect(() => {
+		if (error) {
+			const timeout = setTimeout(() => {
+				setError(null);
+			}, 5000); // Clear error after 5 seconds
+
+			return () => clearTimeout(timeout);
+		}
+	}, [error]);
 
 	return {
+		// Data
 		tokens,
 		filteredTokens,
+		tokenStats,
+
+		// Loading states
+		isLoading,
+		error,
+
+		// Search
 		searchToken,
 		setSearchToken,
+
+		// UI states
 		copiedTokenId,
+
+		// Actions
 		createToken,
 		updateToken,
 		deleteToken,
+		refreshTokens,
+		markTokenAsUsed,
+		findTokenByString,
 		copyToClipboard,
+		toggleTokenStatus,
+
+		// Utils
+		clearError: () => setError(null),
 	};
 };
