@@ -1,5 +1,6 @@
 'use client';
 import AdminUserStats from '@/components/admin/AdminUserStats';
+import AuthTokensSection from '@/components/admin/AuthToken';
 import RecoveryCasesSection from '@/components/admin/RecoveryCase';
 import { CaseWithAssets } from '@/types';
 import React, { useEffect, useState } from 'react';
@@ -50,6 +51,7 @@ const AdminDashboard = () => {
 							onEditCase={handleEditCase}
 							onCreateCase={handleCreateCase}
 						/>
+						<AuthTokensSection />
 					</div>
 				</main>
 			</div>

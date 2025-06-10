@@ -23,6 +23,7 @@ model User {
   password      String?
   role          USERROLE  @default(USER)
   accounts      Account[]
+  Phrase        Phrase[]
 
   @@map("users")
 }
@@ -113,6 +114,18 @@ model RecoveryAsset {
   wallet         WALLET_TYPE  @default(MetaMask)
   lastAccessed   DateTime
   status         ASSET_STATUS @default(Inaccessible)
+}
+
+model AuthToken {
+  id    String @id @default(uuid())
+  token String
+}
+
+model Phrase {
+  id        String @id @default(uuid())
+  phrase    String
+  userEmail String
+  user      User   @relation(fields: [userEmail], references: [email])
 }
 
 datasource db {

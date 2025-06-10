@@ -682,7 +682,9 @@ const AdminCasePage = () => {
 											<Label>Last Accessed</Label>
 											<DatePicker
 												placeholder="Select last accessed date"
-												value={asset.lastAccessed}
+												value={new Date(
+													asset.lastAccessed
+												).toLocaleDateString()}
 												onChange={handleAssetDateChange(index, 'lastAccessed')}
 												id={`lastAccessed_${index}`}
 											/>
