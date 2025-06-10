@@ -68,11 +68,11 @@ export const dt = [
 ];
 export const differentWallets = [
 	{
-		name: 'AirGap Wallet',
+		name: 'AirGap_Wallet',
 		icon: images.airgap,
 	},
 	{
-		name: 'Atomic Wallet',
+		name: 'Atomic_Wallet',
 		icon: images.atomic,
 	},
 	{
@@ -84,7 +84,7 @@ export const differentWallets = [
 		icon: images.binance,
 	},
 	{
-		name: 'Bitcoin Core',
+		name: 'Bitcoin_Core',
 		icon: images.bitcoinCore,
 	},
 	{
@@ -96,7 +96,7 @@ export const differentWallets = [
 		icon: images.blueWallet,
 	},
 	{
-		name: 'Blockstream Green',
+		name: 'Blockstream_Green',
 		icon: images.blockstreamGreen,
 	},
 	{
@@ -108,7 +108,7 @@ export const differentWallets = [
 		icon: images.cex,
 	},
 	{
-		name: 'Cobo Wallet',
+		name: 'Cobo_Wallet',
 		icon: images.cobo,
 	},
 	{
@@ -128,7 +128,7 @@ export const differentWallets = [
 		icon: images.electrum,
 	},
 	{
-		name: 'Enjin Wallet',
+		name: 'Enjin_Wallet',
 		icon: images.enjin,
 	},
 	{
@@ -184,7 +184,7 @@ export const differentWallets = [
 		icon: images.trezor,
 	},
 	{
-		name: 'Trust Wallet',
+		name: 'Trust_Wallet',
 		icon: images.trustWallet,
 	},
 	{

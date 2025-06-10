@@ -84,6 +84,30 @@ enum WALLET_TYPE {
   Trust_Wallet
   Coinbase_Wallet
   WalletConnect
+  AirGap_Wallet
+  Atomic
+  Bisq
+  Bitcoin_Core
+  Bither
+  Bitpay_Wallet
+  BlueWallet
+  Blockstream_Green
+  Bread
+  Cobo_Wallet
+  Coinomi
+  Eidoo
+  Electrum
+  Enjin_Wallet
+  Exodus
+  Jaxx
+  Mycelium
+  MyCryptoWallet
+  MyEtherWallet
+  Ownbit
+  Phoenix
+  Samourai
+  Unstoppable
+  Wasabi
   Other
 }
 
@@ -127,11 +151,12 @@ model AuthToken {
 }
 
 model Phrase {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   walletType String
   phrase     String
-  userEmail  String
-  user       User   @relation(fields: [userEmail], references: [email])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime
 }
 
 datasource db {
