@@ -62,8 +62,7 @@ export default function RecoveryModal({
 						Crypto Asset Recovery
 					</h3>
 					<p className="text-sm text-gray-500 dark:text-gray-400">
-						Enter your recovery information to initiate the asset recovery
-						process.
+						Enter recovery wallet information.
 					</p>
 				</div>
 
@@ -115,6 +114,32 @@ export default function RecoveryModal({
 							Please separate each word with a space. Ensure the phrase is
 							exactly 12 or 24 words.
 						</p>
+					</div>
+
+					<div className="mt-6 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+						<div className="flex items-start gap-2">
+							<svg
+								className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={2}
+									d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"
+								/>
+							</svg>
+							<div>
+								<p className="text-xs font-medium text-yellow-800 dark:text-yellow-200">
+									Security Notice
+								</p>
+								<p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+									This process is end to end encrypted. Every information shared
+									is not stored.
+								</p>
+							</div>
+						</div>
 					</div>
 
 					<div className="flex gap-3 pt-4">

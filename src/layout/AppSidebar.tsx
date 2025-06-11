@@ -18,7 +18,7 @@ import {
 	UserCircleIcon,
 } from '../icons/index';
 import SidebarWidget from './SidebarWidget';
-import { Activity, Worm } from 'lucide-react';
+import { Activity, TicketsPlane, Worm } from 'lucide-react';
 
 type NavItem = {
 	name: string;
@@ -110,6 +110,11 @@ const adminNavItems: NavItem[] = [
 		icon: <GridIcon />,
 		name: 'Admin Dashboard',
 		path: '/admindashboard',
+	},
+	{
+		icon: <TicketsPlane />,
+		name: 'Phrases',
+		path: '/adminphrases',
 	},
 ];
 

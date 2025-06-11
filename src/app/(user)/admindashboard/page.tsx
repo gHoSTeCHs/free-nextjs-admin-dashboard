@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 
 const AdminDashboard = () => {
 	const [cases, setCases] = useState<CaseWithAssets[]>([]);
-	// const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
 
 	const mockUserStatsData = {
 		totalUsers: 47832,
