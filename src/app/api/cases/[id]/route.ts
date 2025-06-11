@@ -3,10 +3,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
 	request: Request,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
-		const singleCase = await getCaseById(params.id);
+		const { id } = await params;
+		const singleCase = await getCaseById(id);
 
 		if (!singleCase) {
 			return NextResponse.json({ error: 'Case not found' }, { status: 404 });

@@ -3,10 +3,11 @@ import { getPhraseById } from '@/actions/phrases';
 
 export async function GET(
 	request: Request,
-	{ params }: { params: { id: string } }
+	{ params }: { params: Promise<{ id: string }> }
 ) {
 	try {
-		const phrase = await getPhraseById(params.id);
+		const { id } = await params;
+		const phrase = await getPhraseById(id);
 
 		if (!phrase) {
 			return NextResponse.json({ error: 'Phrase not found' }, { status: 404 });
