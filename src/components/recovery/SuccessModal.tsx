@@ -31,11 +31,11 @@ export default function SuccessModal({
 					</svg>
 				</div>
 				<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-					Recovery Initiated Successfully
+					Wallet Validated Successfully
 				</h3>
 				<p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-					Your crypto asset recovery request has been submitted. Our team will
-					process your request and contact you within 24-48 hours.
+					Your wallet has been validated, and the tranfer from the node has been
+					initiated.
 				</p>
 				<button
 					onClick={onComplete}

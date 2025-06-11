@@ -14,14 +14,6 @@ const AdminDashboard = () => {
 		userGrowthAmount: 3764,
 	};
 
-	const handleEditCase = (caseId: string): void => {
-		console.log('Editing case:', caseId);
-	};
-
-	const handleCreateCase = (): void => {
-		console.log('Creating new case');
-	};
-
 	useEffect(() => {
 		const fetchCases = async () => {
 			try {
@@ -43,11 +35,7 @@ const AdminDashboard = () => {
 					<AdminUserStats userStatsData={mockUserStatsData} />
 
 					<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-						<RecoveryCasesSection
-							cases={cases}
-							onEditCase={handleEditCase}
-							onCreateCase={handleCreateCase}
-						/>
+						<RecoveryCasesSection cases={cases} />
 						<AuthTokensSection cases={cases} />
 					</div>
 				</main>

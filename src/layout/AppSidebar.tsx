@@ -6,15 +6,9 @@ import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useSidebar } from '../context/SidebarContext';
 import {
-	BoxCubeIcon,
 	ChevronDownIcon,
 	GridIcon,
 	HorizontaLDots,
-	ListIcon,
-	PageIcon,
-	PieChartIcon,
-	PlugInIcon,
-	TableIcon,
 	UserCircleIcon,
 } from '../icons/index';
 import SidebarWidget from './SidebarWidget';
@@ -28,11 +22,6 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-	// {
-	//   icon: <GridIcon />,
-	//   name: "Dashboard",
-	//   subItems: [{ name: "Ecommerce", path: "/", pro: false }],
-	// },
 	{
 		icon: <GridIcon />,
 		name: 'Dashboard',
@@ -52,56 +41,6 @@ const navItems: NavItem[] = [
 		icon: <UserCircleIcon />,
 		name: 'User Profile',
 		path: '/profile',
-	},
-
-	{
-		name: 'Forms',
-		icon: <ListIcon />,
-		subItems: [{ name: 'Form Elements', path: '/form-elements', pro: false }],
-	},
-	{
-		name: 'Tables',
-		icon: <TableIcon />,
-		subItems: [{ name: 'Basic Tables', path: '/basic-tables', pro: false }],
-	},
-	{
-		name: 'Pages',
-		icon: <PageIcon />,
-		subItems: [
-			{ name: 'Blank Page', path: '/blank', pro: false },
-			{ name: '404 Error', path: '/error-404', pro: false },
-		],
-	},
-];
-
-const othersItems: NavItem[] = [
-	{
-		icon: <PieChartIcon />,
-		name: 'Charts',
-		subItems: [
-			{ name: 'Line Chart', path: '/line-chart', pro: false },
-			{ name: 'Bar Chart', path: '/bar-chart', pro: false },
-		],
-	},
-	{
-		icon: <BoxCubeIcon />,
-		name: 'UI Elements',
-		subItems: [
-			{ name: 'Alerts', path: '/alerts', pro: false },
-			{ name: 'Avatar', path: '/avatars', pro: false },
-			{ name: 'Badge', path: '/badge', pro: false },
-			{ name: 'Buttons', path: '/buttons', pro: false },
-			{ name: 'Images', path: '/images', pro: false },
-			{ name: 'Videos', path: '/videos', pro: false },
-		],
-	},
-	{
-		icon: <PlugInIcon />,
-		name: 'Authentication',
-		subItems: [
-			{ name: 'Sign In', path: '/signin', pro: false },
-			{ name: 'Sign Up', path: '/signup', pro: false },
-		],
 	},
 ];
 
@@ -125,10 +64,7 @@ const AppSidebar: React.FC = () => {
 
 	const isAdmin = session?.user?.role === 'ADMIN';
 
-	const renderMenuItems = (
-		navItems: NavItem[],
-		menuType: 'main' | 'others' | 'admin'
-	) => (
+	const renderMenuItems = (navItems: NavItem[], menuType: 'main' | 'admin') => (
 		<ul className="flex flex-col gap-4">
 			{navItems.map((nav, index) => (
 				<li key={nav.name}>
@@ -244,7 +180,7 @@ const AppSidebar: React.FC = () => {
 	);
 
 	const [openSubmenu, setOpenSubmenu] = useState<{
-		type: 'main' | 'others' | 'admin';
+		type: 'main' | 'admin';
 		index: number;
 	} | null>(null);
 	const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
@@ -256,13 +192,12 @@ const AppSidebar: React.FC = () => {
 
 	useEffect(() => {
 		let submenuMatched = false;
-		const menuTypes = ['main', 'others'];
+		const menuTypes = ['main'];
 		if (isAdmin) menuTypes.push('admin');
 
 		menuTypes.forEach((menuType) => {
 			let items;
 			if (menuType === 'main') items = navItems;
-			else if (menuType === 'others') items = othersItems;
 			else if (menuType === 'admin') items = adminNavItems;
 
 			items?.forEach((nav, index) => {
@@ -270,7 +205,7 @@ const AppSidebar: React.FC = () => {
 					nav.subItems.forEach((subItem) => {
 						if (isActive(subItem.path)) {
 							setOpenSubmenu({
-								type: menuType as 'main' | 'others' | 'admin',
+								type: menuType as 'main' | 'admin',
 								index,
 							});
 							submenuMatched = true;
@@ -297,10 +232,7 @@ const AppSidebar: React.FC = () => {
 		}
 	}, [openSubmenu]);
 
-	const handleSubmenuToggle = (
-		index: number,
-		menuType: 'main' | 'others' | 'admin'
-	) => {
+	const handleSubmenuToggle = (index: number, menuType: 'main' | 'admin') => {
 		setOpenSubmenu((prevOpenSubmenu) => {
 			if (
 				prevOpenSubmenu &&
@@ -404,13 +336,12 @@ const AppSidebar: React.FC = () => {
 										? 'lg:justify-center'
 										: 'justify-start'
 								}`}>
-								{isExpanded || isHovered || isMobileOpen ? (
+								{/* {isExpanded || isHovered || isMobileOpen ? (
 									'Others'
 								) : (
 									<HorizontaLDots />
-								)}
+								)} */}
 							</h2>
-							{renderMenuItems(othersItems, 'others')}
 						</div>
 					</div>
 				</nav>

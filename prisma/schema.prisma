@@ -87,6 +87,7 @@ enum WALLET_TYPE {
   AirGap_Wallet
   Atomic
   Bisq
+  Binance
   Bitcoin_Core
   Bither
   Bitpay_Wallet

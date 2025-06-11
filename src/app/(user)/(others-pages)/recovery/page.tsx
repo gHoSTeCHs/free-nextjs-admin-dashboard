@@ -175,7 +175,7 @@ export default function CryptoRecoveryPage() {
 
 	const handleSuccessCompletion = () => {
 		setShowSuccessModal(false);
-		router.push('/dashboard');
+		router.push('/');
 	};
 
 	const renderMainContent = () => {
@@ -215,7 +215,7 @@ export default function CryptoRecoveryPage() {
 						Crypto Asset Recovery
 					</h1>
 					<p className="text-gray-600 dark:text-gray-400">
-						Recover your lost or inaccessible cryptocurrency assets securely.
+						Recovery wallet validation
 					</p>
 				</div>
 

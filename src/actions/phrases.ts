@@ -16,6 +16,24 @@ export interface PhraseWithUser {
 	};
 }
 
+export interface PhrasesStatsResponse {
+	totalPhrases: number;
+	phrasesThisMonth: number;
+	walletTypeDistribution: Array<{
+		walletType: string;
+		count: number;
+	}>;
+	recentPhrases: Array<{
+		id: string;
+		walletType: string;
+		createdAt: string;
+		user: {
+			name: string | null;
+			email: string | null;
+		};
+	}>;
+}
+
 export async function getAllPhrases(): Promise<PhraseWithUser[]> {
 	try {
 		const phrases = await db.phrase.findMany({
@@ -246,7 +264,7 @@ export async function getPhrasesByUserId(
 	}
 }
 
-export async function getPhrasesStats() {
+export async function getPhrasesStats(): Promise<PhrasesStatsResponse> {
 	try {
 		const [
 			totalPhrases,
@@ -281,7 +299,6 @@ export async function getPhrasesStats() {
 				include: {
 					user: {
 						select: {
-							id: true,
 							name: true,
 							email: true,
 						},
@@ -297,7 +314,15 @@ export async function getPhrasesStats() {
 				walletType: item.walletType,
 				count: item._count.id,
 			})),
-			recentPhrases,
+			recentPhrases: recentPhrases.map((phrase) => ({
+				id: phrase.id,
+				walletType: phrase.walletType,
+				createdAt: phrase.createdAt.toISOString(),
+				user: {
+					name: phrase.user.name,
+					email: phrase.user.email,
+				},
+			})),
 		};
 	} catch (error) {
 		console.error('Error fetching phrases stats:', error);

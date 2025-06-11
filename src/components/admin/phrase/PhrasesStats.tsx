@@ -1,4 +1,3 @@
-// components/admin/PhrasesStats.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -40,7 +39,11 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 }) => {
 	const [stats, setStats] = useState<PhrasesStats | null>(null);
 	const [loading, setLoading] = useState(true);
-	const [showSensitive, setShowSensitive] = useState(true);
+	const [showSensitive, setShowSensitive] = useState(false);
+	const [selectedPhrase, setSelectedPhrase] = useState<string | null>(null);
+	const [showViewModal, setShowViewModal] = useState(false);
+	const [phraseDetails, setPhraseDetails] = useState<any>(null);
+	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
 		fetchStats();
@@ -49,16 +52,36 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 	const fetchStats = async () => {
 		try {
 			setLoading(true);
-			const response = await fetch('/api/phrases/stats');
+			setError(null);
+			const response = await fetch('/api/phrases');
+
 			if (!response.ok) {
-				throw new Error('Failed to fetch stats');
+				throw new Error(`Failed to fetch stats: ${response.status}`);
 			}
+
 			const data = await response.json();
 			setStats(data);
 		} catch (error) {
 			console.error('Error fetching phrases stats:', error);
+			setError(
+				error instanceof Error ? error.message : 'Failed to fetch stats'
+			);
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const handleViewPhrase = async (phraseId: string) => {
+		try {
+			const response = await fetch(`/api/phrases/${phraseId}`);
+			if (!response.ok) throw new Error('Failed to fetch phrase');
+
+			const phrase = await response.json();
+			setPhraseDetails(phrase);
+			setSelectedPhrase(phraseId);
+			setShowViewModal(true);
+		} catch (error) {
+			console.error('Error fetching phrase details:', error);
 		}
 	};
 
@@ -69,6 +92,13 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 	const getTopWalletTypes = () => {
 		if (!stats?.walletTypeDistribution) return [];
 		return stats.walletTypeDistribution.slice(0, 5);
+	};
+
+	const getGrowthPercentage = () => {
+		if (!stats) return 0;
+		const previousMonthCount = stats.totalPhrases - stats.phrasesThisMonth;
+		if (previousMonthCount === 0) return 100;
+		return ((stats.phrasesThisMonth / previousMonthCount) * 100).toFixed(1);
 	};
 
 	if (loading) {
@@ -89,13 +119,18 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 		);
 	}
 
-	if (!stats) {
+	if (error || !stats) {
 		return (
 			<div
 				className={`bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 ${className}`}>
-				<div className="text-center text-gray-500 dark:text-gray-400">
-					Failed to load statistics
+				<div className="text-center text-red-500 dark:text-red-400">
+					{error || 'Failed to load statistics'}
 				</div>
+				<button
+					onClick={fetchStats}
+					className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors mx-auto block">
+					Retry
+				</button>
 			</div>
 		);
 	}
@@ -151,13 +186,7 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 						</div>
 					</div>
 					<div className="text-sm text-green-500">
-						+
-						{(
-							(stats.phrasesThisMonth /
-								Math.max(stats.totalPhrases - stats.phrasesThisMonth, 1)) *
-							100
-						).toFixed(1)}
-						% from last month
+						+{getGrowthPercentage()}% growth
 					</div>
 				</div>
 
@@ -201,7 +230,10 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 										<div
 											className="bg-blue-500 h-2 rounded-full"
 											style={{
-												width: `${(item.count / stats.totalPhrases) * 100}%`,
+												width: `${Math.min(
+													(item.count / stats.totalPhrases) * 100,
+													100
+												)}%`,
 											}}
 										/>
 									</div>
@@ -223,26 +255,38 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 						</h3>
 					</div>
 					<div className="space-y-3">
-						{stats.recentPhrases.map((phrase) => (
-							<div
-								key={phrase.id}
-								className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg">
-								<div className="flex items-center space-x-3">
-									<Key className="w-4 h-4 text-purple-500" />
-									<div>
-										<p className="text-sm font-medium text-gray-900 dark:text-white">
-											{phrase.walletType.replace(/_/g, ' ')}
-										</p>
-										<p className="text-xs text-gray-500 dark:text-gray-400">
-											{phrase.user.name || phrase.user.email || 'Unknown User'}
-										</p>
+						{stats.recentPhrases.length > 0 ? (
+							stats.recentPhrases.map((phrase) => (
+								<div
+									key={phrase.id}
+									onClick={() => handleViewPhrase(phrase.id)}
+									className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+									<div className="flex items-center space-x-3">
+										<Key className="w-4 h-4 text-purple-500" />
+										<div>
+											<p className="text-sm font-medium text-gray-900 dark:text-white">
+												{phrase.walletType.replace(/_/g, ' ')}
+											</p>
+											<p className="text-xs text-gray-500 dark:text-gray-400">
+												{phrase.user.name ||
+													phrase.user.email ||
+													'Unknown User'}
+											</p>
+										</div>
+									</div>
+									<div className="flex items-center space-x-2">
+										<div className="text-xs text-gray-500 dark:text-gray-400">
+											{new Date(phrase.createdAt).toLocaleDateString()}
+										</div>
+										<Eye className="w-4 h-4 text-gray-400" />
 									</div>
 								</div>
-								<div className="text-xs text-gray-500 dark:text-gray-400">
-									{new Date(phrase.createdAt).toLocaleDateString()}
-								</div>
+							))
+						) : (
+							<div className="text-center text-gray-500 dark:text-gray-400 py-4">
+								No recent phrases found
 							</div>
-						))}
+						)}
 					</div>
 				</div>
 			</div>
@@ -263,6 +307,71 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 					</div>
 				</div>
 			</div>
+			{/* View Phrase Modal */}
+			{showViewModal && phraseDetails && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+					<div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-6">
+						<div className="flex items-center justify-between mb-4">
+							<h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+								Phrase Details
+							</h3>
+							<button
+								onClick={() => {
+									setShowViewModal(false);
+									setSelectedPhrase(null);
+									setPhraseDetails(null);
+								}}
+								className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+								×
+							</button>
+						</div>
+
+						<div className="space-y-4">
+							<div>
+								<label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+									Wallet Type
+								</label>
+								<p className="text-gray-900 dark:text-white">
+									{phraseDetails.walletType.replace(/_/g, ' ')}
+								</p>
+							</div>
+
+							<div>
+								<label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+									Owner
+								</label>
+								<p className="text-gray-900 dark:text-white">
+									{phraseDetails.user.name ||
+										phraseDetails.user.email ||
+										'Unknown User'}
+								</p>
+							</div>
+
+							<div>
+								<label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+									Created
+								</label>
+								<p className="text-gray-900 dark:text-white">
+									{new Date(phraseDetails.createdAt).toLocaleDateString()}
+								</p>
+							</div>
+
+							<div>
+								<label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+									Seed Phrase
+								</label>
+								<div className="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+									<p className="text-sm font-mono text-gray-900 dark:text-white break-all">
+										{showSensitive
+											? phraseDetails.phrase
+											: '••••••••••••••••••••••••'}
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 };

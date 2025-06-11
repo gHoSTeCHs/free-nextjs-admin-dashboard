@@ -51,8 +51,7 @@ export default function CaseIdVerificationModal({
 						Enter Case ID
 					</h3>
 					<p className="text-sm text-gray-500 dark:text-gray-400">
-						Please enter your case ID to access your crypto asset recovery
-						information.
+						Please enter your case ID
 					</p>
 				</div>
 
