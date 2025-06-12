@@ -29,5 +29,10 @@
 		".next/types/**/*.ts",
 		"src/app/(admin)/admintest"
 	],
-	"exclude": ["node_modules", "src/generated"]
+	"exclude": [
+		"node_modules",
+		"src/generated",
+		"/generated/prisma/client",
+		"generated"
+	]
 }
