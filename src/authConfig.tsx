@@ -1,13 +1,12 @@
-import type {NextAuthConfig} from 'next-auth'
-import Credentials from 'next-auth/providers/credentials'
-import { LoginSchema } from './schema'
+import type { NextAuthConfig } from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import { LoginSchema } from './schema';
 import { getUserByEmail } from './data/user';
 import bcrypt from 'bcryptjs';
 
-
 export default {
-  providers: [
-    Credentials({
+	providers: [
+		Credentials({
 			async authorize(credentials) {
 				const validatedFields = LoginSchema.safeParse(credentials);
 
@@ -24,5 +23,5 @@ export default {
 				return null;
 			},
 		}),
-  ]
-}satisfies NextAuthConfig;
+	],
+} satisfies NextAuthConfig;
