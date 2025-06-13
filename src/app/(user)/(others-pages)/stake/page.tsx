@@ -39,7 +39,7 @@ export default function StakingDashboard() {
 				</div>
 			</div>
 
-			<div className="fixed top-0 left-0 lg:left-[90px] xl:left-[290px] right-0 bottom-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center lg:top-16">
+			<div className="fixed top-0 left-0 right-0 bottom-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center lg:top-16 lg:left-[90px] xl:left-[290px]">
 				<div className="text-center">
 					<h1 className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tight">
 						FEATURE
