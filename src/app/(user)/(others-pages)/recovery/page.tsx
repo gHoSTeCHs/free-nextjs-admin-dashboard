@@ -187,10 +187,10 @@ export default function CryptoRecoveryPage() {
 				<div className="space-y-6">
 					<CaseHeader caseData={caseData} />
 					<SummaryCards caseData={caseData} />
+					<AssetsTable recoveryAssets={caseData.recoveryAssets} />
 					<RecoveryAction
 						onInitiateRecovery={() => setShowRecoveryModal(true)}
 					/>
-					<AssetsTable recoveryAssets={caseData.recoveryAssets} />
 				</div>
 			);
 		}
