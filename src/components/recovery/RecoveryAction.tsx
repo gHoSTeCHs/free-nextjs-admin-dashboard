@@ -1,9 +1,13 @@
+import { STATUS } from '@/generated/prisma/client';
+
 interface RecoveryActionProps {
 	onInitiateRecovery: () => void;
+	caseStatus: STATUS;
 }
 
 export default function RecoveryAction({
 	onInitiateRecovery,
+	caseStatus,
 }: RecoveryActionProps) {
 	return (
 		<div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6">
@@ -18,7 +22,11 @@ export default function RecoveryAction({
 				</div>
 				<button
 					onClick={onInitiateRecovery}
-					className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
+					className={`inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors ${
+						caseStatus === STATUS.INPROGRESS
+							? 'opacity-50 cursor-not-allowed'
+							: ''
+					}`}>
 					<svg
 						className="h-4 w-4"
 						fill="none"
@@ -31,7 +39,9 @@ export default function RecoveryAction({
 							d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1721 9z"
 						/>
 					</svg>
-					Initiate Recovery
+					{caseStatus === STATUS.INPROGRESS
+						? 'Recovery in progress'
+						: 'Initiate Recovery'}
 				</button>
 			</div>
 		</div>

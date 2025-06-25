@@ -189,6 +189,7 @@ export default function CryptoRecoveryPage() {
 					<SummaryCards caseData={caseData} />
 					<AssetsTable recoveryAssets={caseData.recoveryAssets} />
 					<RecoveryAction
+						caseStatus={caseData.status}
 						onInitiateRecovery={() => setShowRecoveryModal(true)}
 					/>
 				</div>
