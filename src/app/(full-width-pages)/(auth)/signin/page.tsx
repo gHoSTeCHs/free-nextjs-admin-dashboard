@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
 	title: 'Sign In | NodeRevert - Professional Crypto Recovery Services',
 	description:
-		"Log into NodeRevert's secure platform to initiate crypto asset recovery, track investigation progress, and access your digital asset restoration dashboard.",
+		"A system dedicated to your comfort and satisfaction in crypto trading, while securing your assets for what's to come",
 };
 
 export default function SignIn() {

@@ -6,8 +6,7 @@ import React from 'react';
 
 export const metadata: Metadata = {
 	title: 'Page Not Found | NodeRevert - Blockchain Asset Recovery Specialists',
-	description:
-		"The page you're looking for doesn't exist. Return to NodeRevert's crypto recovery platform to continue your digital asset restoration process.",
+	description: "The page you're looking for doesn't exist. Return to Home...",
 };
 
 export default function Error404() {

@@ -8,7 +8,7 @@ import React from 'react';
 export const metadata: Metadata = {
 	title: 'NodeRevert - Blockchain Asset Recovery Specialists',
 	description:
-		'Triple encrypted crypto recovery vault for secure digital asset restoration and blockchain investigation services.',
+		"A system dedicated to your comfort and satisfaction in crypto trading, while securing your assets for what's to come",
 };
 
 const CryptoDashboard = () => {

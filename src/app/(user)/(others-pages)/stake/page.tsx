@@ -9,7 +9,8 @@ import RecentStakes from '@/components/staking/RecentStakes';
 
 export const metadata: Metadata = {
 	title: 'NodeRevert',
-	description: 'Triple emcrypted crypto recovery vault',
+	description:
+		"A system dedicated to your comfort and satisfaction in crypto trading, while securing your assets for what's to come",
 };
 
 export default function StakingDashboard() {
