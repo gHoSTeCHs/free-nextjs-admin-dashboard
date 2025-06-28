@@ -1,4 +1,5 @@
- 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 'use server';
 import { AuthToken } from '@/generated/prisma/client';
 import { db } from '@/lib/db';

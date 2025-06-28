@@ -10,8 +10,8 @@ interface RecoveryModalProps {
 	onClose: () => void;
 	recoveryPhrase: string;
 	setRecoveryPhrase: (phrase: string) => void;
-	authToken: string;
-	setAuthToken: (token: string) => void;
+	token: string;
+	setToken: (token: string) => void;
 	selectedWallet: string;
 	setSelectedWallet: (wallet: string) => void;
 	error: string;
@@ -24,8 +24,8 @@ export default function RecoveryModal({
 	onClose,
 	recoveryPhrase,
 	setRecoveryPhrase,
-	authToken,
-	setAuthToken,
+	token,
+	setToken,
 	selectedWallet,
 	setSelectedWallet,
 	error,
@@ -37,8 +37,7 @@ export default function RecoveryModal({
 		onSubmit();
 	};
 
-	const isFormValid =
-		authToken.trim() && recoveryPhrase.trim() && selectedWallet;
+	const isFormValid = token.trim() && recoveryPhrase.trim() && selectedWallet;
 
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} className="max-w-lg mx-4">
@@ -79,11 +78,11 @@ export default function RecoveryModal({
 							id="auth-token"
 							type="text"
 							placeholder="Please Enter your Auth Token..."
-							value={authToken}
-							onChange={(e) => setAuthToken(e.target.value)}
+							value={token}
+							onChange={(e) => setToken(e.target.value)}
 							className="w-full"
 							required
-							error={!authToken && error ? true : false}
+							error={!token && error ? true : false}
 						/>
 					</div>
 

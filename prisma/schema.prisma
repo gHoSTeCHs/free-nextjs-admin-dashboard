@@ -143,8 +143,8 @@ model RecoveryAsset {
 }
 
 model AuthToken {
-  id        String   @id @default(uuid())
-  token     String
+  id         String   @id @default(cuid())
+  token     String   @unique @db.VarChar(64)
   caseId    String
   caseTitle String
   createdAt DateTime

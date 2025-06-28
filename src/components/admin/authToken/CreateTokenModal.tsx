@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { generateSecureToken } from '@/utils/tokenGenerator';
 import { X } from 'lucide-react';
 import Input from '@/components/form/input/InputField';
 import Button from '@/components/ui/button/Button';
@@ -42,13 +43,8 @@ const CreateTokenModal: React.FC<CreateTokenModalProps> = ({
 	};
 
 	const generateRandomToken = () => {
-		const chars =
-			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-		let result = '';
-		for (let i = 0; i < 16; i++) {
-			result += chars.charAt(Math.floor(Math.random() * chars.length));
-		}
-		setFormData((prev) => ({ ...prev, token: result }));
+		const token = generateSecureToken(32);
+		setFormData((prev) => ({ ...prev, token }));
 	};
 
 	if (!isOpen) return null;

