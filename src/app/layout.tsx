@@ -4,10 +4,17 @@ import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { SessionProvider } from 'next-auth/react';
 import NextTopLoader from 'nextjs-toploader';
+import { Metadata } from 'next';
 
 const outfit = Outfit({
 	subsets: ['latin'],
 });
+
+export const metadata: Metadata = {
+	verification: {
+		google: 'Snp83lyy1ZjLKtSIvM7lW-qdgCRvQPcpBiszWyFF6-0',
+	},
+};
 
 export default async function RootLayout({
 	children,
