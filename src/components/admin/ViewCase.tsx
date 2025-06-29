@@ -15,7 +15,7 @@ import {
 import {
 	PRIORITY,
 	STATUS,
-	WALLET_TYPE,
+	WALL_TYPE,
 	ASSET_STATUS,
 } from '@/generated/prisma/client';
 import { CaseWithAssets } from '@/types';
@@ -96,7 +96,7 @@ const ViewCaseModal: React.FC<ViewCaseModalProps> = ({
 		}
 	};
 
-	const formatWalletType = (walletType: WALLET_TYPE): string => {
+	const formatWalletType = (walletType: WALL_TYPE): string => {
 		return walletType.replace(/_/g, ' ');
 	};
 
@@ -397,7 +397,7 @@ const ViewCaseModal: React.FC<ViewCaseModalProps> = ({
 												</td>
 												<td className="px-6 py-4 whitespace-nowrap">
 													<div className="text-sm text-gray-900 dark:text-white">
-														{formatWalletType(asset.wallet)}
+														{formatWalletType(asset.wall)}
 													</div>
 													<div className="text-sm text-gray-500 dark:text-gray-400">
 														Last accessed:{' '}

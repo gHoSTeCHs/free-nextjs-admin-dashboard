@@ -108,7 +108,7 @@ export default function AssetsTable({
 								</td>
 								<td className="px-6 py-4 whitespace-nowrap">
 									<div className="text-sm text-gray-900 dark:text-white">
-										{getWalletTypeDisplay(asset.wallet)}
+										{getWalletTypeDisplay(asset.wall)}
 									</div>
 								</td>
 								<td className="px-6 py-4 whitespace-nowrap">

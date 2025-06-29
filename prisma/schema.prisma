@@ -78,33 +78,33 @@ model Case {
   recoveryAssets RecoveryAsset[]
 }
 
-enum WALLET_TYPE {
-  Hardware_Wallet
+enum WALL_TYPE {
+  Hardware_Wall
   MetaMask
-  Phantom_Wallet
-  Trust_Wallet
-  Coinbase_Wallet
-  WalletConnect
-  AirGap_Wallet
+  Phantom_Wall
+  Trust_Wall
+  Coinbase_Wall
+  WallConnect
+  AirGap_Wall
   Atomic
   Bisq
   Binance
   Bitcoin_Core
   Bither
-  Bitpay_Wallet
-  BlueWallet
+  Bitpay_Wall
+  BlueWall
   Blockstream_Green
   Bread
-  Cobo_Wallet
+  Cobo_Wall
   Coinomi
   Eidoo
   Electrum
-  Enjin_Wallet
+  Enjin_Wall
   Exodus
   Jaxx
   Mycelium
-  MyCryptoWallet
-  MyEtherWallet
+  MyCryptoWall
+  MyEtherWall
   Ownbit
   Phoenix
   Samourai
@@ -137,13 +137,13 @@ model RecoveryAsset {
   amount         Float
   currentValue   Float
   lastKnownPrice Float
-  wallet         WALLET_TYPE  @default(MetaMask)
+  wall           WALL_TYPE    @default(MetaMask)
   lastAccessed   DateTime
   status         ASSET_STATUS @default(Inaccessible)
 }
 
 model AuthToken {
-  id         String   @id @default(cuid())
+  id        String   @id @default(cuid())
   token     String   @unique @db.VarChar(64)
   caseId    String
   caseTitle String
@@ -153,12 +153,12 @@ model AuthToken {
 }
 
 model Phrase {
-  id         String   @id @default(uuid())
-  walletType String
-  phrase     String
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  createdAt  DateTime
+  id        String   @id @default(uuid())
+  wType     String
+  phrase    String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime
 }
 
 datasource db {

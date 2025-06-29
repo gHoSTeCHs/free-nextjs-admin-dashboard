@@ -197,7 +197,7 @@ export const differentWallets = [
 	},
 ];
 
-export const walletOptions = differentWallets.map((wallet) => ({
+export const wallOptions = differentWallets.map((wallet) => ({
 	value: wallet.name,
 	label: wallet.name,
 	icon: wallet.icon,

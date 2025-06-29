@@ -192,7 +192,7 @@ const EditCaseModal: React.FC<EditCaseModalProps> = ({
 				amount: 0,
 				currentValue: 0,
 				lastKnownPrice: 0,
-				wallet: 'MetaMask',
+				wall: 'MetaMask',
 				lastAccessed: new Date(),
 				status: 'Inaccessible',
 			},
@@ -687,9 +687,9 @@ const EditCaseModal: React.FC<EditCaseModalProps> = ({
 										<Select
 											options={walletOptions}
 											placeholder="Select wallet type"
-											value={asset.wallet}
+											value={asset.wall}
 											onChange={(e) =>
-												handleAssetChange(index, 'wallet', e.target.value)
+												handleAssetChange(index, 'wall', e.target.value)
 											}
 										/>
 									</div>

@@ -59,7 +59,7 @@ export default function SummaryCards({ caseData }: SummaryCardsProps) {
 			bgColor: 'bg-blue-100 dark:bg-blue-900/20',
 		},
 		{
-			title: 'Assets to Recover',
+			title: 'Assets to Restore',
 			value: caseData.assetsToRecover.toString(),
 			icon: (
 				<svg
@@ -78,7 +78,7 @@ export default function SummaryCards({ caseData }: SummaryCardsProps) {
 			bgColor: 'bg-orange-100 dark:bg-orange-900/20',
 		},
 		{
-			title: 'Recovery Methods',
+			title: 'Restoration Methods',
 			value: caseData.recoveryMethods.toString(),
 			icon: (
 				<svg

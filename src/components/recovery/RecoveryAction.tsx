@@ -14,10 +14,10 @@ export default function RecoveryAction({
 			<div className="flex items-center justify-between mb-6">
 				<div>
 					<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-						Recovery Action Required
+						Restoration Action Required
 					</h2>
 					<p className="text-gray-600 dark:text-gray-400 mt-1">
-						Initiate recovery process for your cryptocurrency assets
+						Initiate restoration process for your cryptocurrency assets
 					</p>
 				</div>
 				<button
@@ -36,12 +36,12 @@ export default function RecoveryAction({
 							strokeLinecap="round"
 							strokeLinejoin="round"
 							strokeWidth={2}
-							d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1721 9z"
+							d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
 						/>
 					</svg>
 					{caseStatus === STATUS.INPROGRESS
-						? 'Recovery in progress'
-						: 'Initiate Recovery'}
+						? 'Restoration in progress'
+						: 'Initiate Restoration'}
 				</button>
 			</div>
 		</div>

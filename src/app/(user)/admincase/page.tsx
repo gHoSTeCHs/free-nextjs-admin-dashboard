@@ -36,7 +36,7 @@ const AdminCasePage = () => {
 			amount: 0,
 			currentValue: 0,
 			lastKnownPrice: 0,
-			wallet: 'MetaMask',
+			wall: 'MetaMask',
 			lastAccessed: new Date(),
 			status: 'Inaccessible',
 			case_id: '',
@@ -146,7 +146,7 @@ const AdminCasePage = () => {
 				amount: 0,
 				currentValue: 0,
 				lastKnownPrice: 0,
-				wallet: 'MetaMask',
+				wall: 'MetaMask',
 				lastAccessed: new Date(),
 				status: 'Inaccessible',
 			},
@@ -309,7 +309,7 @@ const AdminCasePage = () => {
 							amount: 0,
 							currentValue: 0,
 							lastKnownPrice: 0,
-							wallet: 'MetaMask',
+							wall: 'MetaMask',
 							lastAccessed: new Date(),
 							status: 'Inaccessible',
 						},
@@ -659,9 +659,9 @@ const AdminCasePage = () => {
 											<Select
 												options={walletOptions}
 												placeholder="Select wallet type"
-												value={asset.wallet}
+												value={asset.wall}
 												onChange={(e) =>
-													handleAssetChange(index, 'wallet', e.target.value)
+													handleAssetChange(index, 'wall', e.target.value)
 												}
 											/>
 										</div>

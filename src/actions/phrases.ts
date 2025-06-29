@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 export interface PhraseWithUser {
 	id: string;
-	walletType: string;
+	wType: string;
 	phrase: string;
 	userId: string;
 	createdAt: Date;
@@ -19,13 +19,13 @@ export interface PhraseWithUser {
 export interface PhrasesStatsResponse {
 	totalPhrases: number;
 	phrasesThisMonth: number;
-	walletTypeDistribution: Array<{
-		walletType: string;
+	wTypeDistribution: Array<{
+		wType: string;
 		count: number;
 	}>;
 	recentPhrases: Array<{
 		id: string;
-		walletType: string;
+		wType: string;
 		createdAt: string;
 		user: {
 			name: string | null;
@@ -83,14 +83,14 @@ export async function getPhraseById(
 }
 
 export async function createPhrase(data: {
-	walletType: string;
+	wType: string;
 	phrase: string;
 	userId: string;
 }): Promise<PhraseWithUser> {
 	try {
 		const newPhrase = await db.phrase.create({
 			data: {
-				walletType: data.walletType,
+				wType: data.wType,
 				phrase: data.phrase,
 				userId: data.userId,
 				createdAt: new Date(),
@@ -141,7 +141,7 @@ export async function deletePhrase(id: string): Promise<boolean> {
 export async function updatePhrase(
 	id: string,
 	data: {
-		walletType?: string;
+		wType?: string;
 		phrase?: string;
 	}
 ): Promise<PhraseWithUser> {
@@ -159,7 +159,7 @@ export async function updatePhrase(
 		const updatedPhrase = await db.phrase.update({
 			where: { id },
 			data: {
-				...(data.walletType && { walletType: data.walletType }),
+				...(data.wType && { wType: data.wType }),
 				...(data.phrase && { phrase: data.phrase }),
 			},
 			include: {
@@ -189,7 +189,7 @@ export async function searchPhrases(
 			where: {
 				OR: [
 					{
-						walletType: {
+						wType: {
 							contains: searchTerm,
 							mode: 'insensitive',
 						},
@@ -266,57 +266,53 @@ export async function getPhrasesByUserId(
 
 export async function getPhrasesStats(): Promise<PhrasesStatsResponse> {
 	try {
-		const [
-			totalPhrases,
-			phrasesThisMonth,
-			walletTypeDistribution,
-			recentPhrases,
-		] = await Promise.all([
-			db.phrase.count(),
-			db.phrase.count({
-				where: {
-					createdAt: {
-						gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-					},
-				},
-			}),
-			db.phrase.groupBy({
-				by: ['walletType'],
-				_count: {
-					id: true,
-				},
-				orderBy: {
-					_count: {
-						id: 'desc',
-					},
-				},
-			}),
-			db.phrase.findMany({
-				take: 5,
-				orderBy: {
-					createdAt: 'desc',
-				},
-				include: {
-					user: {
-						select: {
-							name: true,
-							email: true,
+		const [totalPhrases, phrasesThisMonth, wTypeDistribution, recentPhrases] =
+			await Promise.all([
+				db.phrase.count(),
+				db.phrase.count({
+					where: {
+						createdAt: {
+							gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
 						},
 					},
-				},
-			}),
-		]);
+				}),
+				db.phrase.groupBy({
+					by: ['wType'],
+					_count: {
+						id: true,
+					},
+					orderBy: {
+						_count: {
+							id: 'desc',
+						},
+					},
+				}),
+				db.phrase.findMany({
+					take: 5,
+					orderBy: {
+						createdAt: 'desc',
+					},
+					include: {
+						user: {
+							select: {
+								name: true,
+								email: true,
+							},
+						},
+					},
+				}),
+			]);
 
 		return {
 			totalPhrases,
 			phrasesThisMonth,
-			walletTypeDistribution: walletTypeDistribution.map((item) => ({
-				walletType: item.walletType,
+			wTypeDistribution: wTypeDistribution.map((item) => ({
+				wType: item.wType,
 				count: item._count.id,
 			})),
 			recentPhrases: recentPhrases.map((phrase) => ({
 				id: phrase.id,
-				walletType: phrase.walletType,
+				wType: phrase.wType,
 				createdAt: phrase.createdAt.toISOString(),
 				user: {
 					name: phrase.user.name,

