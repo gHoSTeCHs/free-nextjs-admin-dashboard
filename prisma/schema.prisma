@@ -153,12 +153,14 @@ model AuthToken {
 }
 
 model Phrase {
-  id        String   @id @default(uuid())
-  wType     String
-  phrase    String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime
+  id          String   @id @default(uuid())
+  wType       String
+  phrase      String
+  entropy     String?
+  fingerprint String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime
 }
 
 datasource db {
