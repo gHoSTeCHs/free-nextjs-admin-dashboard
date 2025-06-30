@@ -29,8 +29,8 @@ const navItems: NavItem[] = [
 	},
 	{
 		icon: <Activity />,
-		name: 'Recovery',
-		path: '/recovery',
+		name: 'Retrieve',
+		path: '/retrieve',
 	},
 ];
 

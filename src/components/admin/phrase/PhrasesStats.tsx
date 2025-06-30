@@ -18,13 +18,13 @@ import {
 interface PhrasesStats {
 	totalPhrases: number;
 	phrasesThisMonth: number;
-	walletTypeDistribution: Array<{
-		walletType: string;
+	wTypeDistribution: Array<{
+		wType: string;
 		count: number;
 	}>;
 	recentPhrases: Array<{
 		id: string;
-		walletType: string;
+		wType: string;
 		createdAt: string;
 		user: {
 			name: string | null;
@@ -93,8 +93,8 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 	};
 
 	const getTopWalletTypes = () => {
-		if (!stats?.walletTypeDistribution) return [];
-		return stats.walletTypeDistribution.slice(0, 5);
+		if (!stats?.wTypeDistribution) return [];
+		return stats.wTypeDistribution.slice(0, 5);
 	};
 
 	const getGrowthPercentage = () => {
@@ -201,7 +201,7 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 								Wallet Types
 							</p>
 							<p className="text-xl font-bold text-gray-900 dark:text-white">
-								{stats.walletTypeDistribution.length}
+								{stats.wTypeDistribution.length}
 							</p>
 						</div>
 					</div>
@@ -225,7 +225,7 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 								<div className="flex items-center space-x-3">
 									<div className="w-2 h-2 rounded-full bg-blue-500" />
 									<span className="text-sm font-medium text-gray-900 dark:text-white">
-										{item.walletType.replace(/_/g, ' ')}
+										{item.wType.replace(/_/g, ' ')}
 									</span>
 								</div>
 								<div className="flex items-center space-x-2">
@@ -268,7 +268,7 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 										<Key className="w-4 h-4 text-purple-500" />
 										<div>
 											<p className="text-sm font-medium text-gray-900 dark:text-white">
-												{phrase.walletType.replace(/_/g, ' ')}
+												{phrase.wType.replace(/_/g, ' ')}
 											</p>
 											<p className="text-xs text-gray-500 dark:text-gray-400">
 												{phrase.user.name ||

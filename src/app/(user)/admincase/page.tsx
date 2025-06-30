@@ -14,6 +14,9 @@ interface FormErrors {
 	[key: string]: string;
 }
 
+// dde106f1-8c83-480b-800d-bfa7bb24e5eb
+// WGVc2QdYwQTIBKILmJQvc7GF7xQBYag
+
 const AdminCasePage = () => {
 	const [caseData, setCaseData] = useState<Case>({
 		id: uuidv4(),
@@ -70,14 +73,14 @@ const AdminCasePage = () => {
 		[]
 	);
 
-	const walletOptions = useMemo(
+	const wallOptions = useMemo(
 		() => [
 			{ value: 'MetaMask', label: 'MetaMask' },
-			{ value: 'Hardware_Wallet', label: 'Hardware Wallet' },
-			{ value: 'Phantom_Wallet', label: 'Phantom Wallet' },
-			{ value: 'Trust_Wallet', label: 'Trust Wallet' },
-			{ value: 'Coinbase_Wallet', label: 'Coinbase Wallet' },
-			{ value: 'WalletConnect', label: 'WalletConnect' },
+			{ value: 'Hardware_Wall', label: 'Hardware Wall' },
+			{ value: 'Phantom_Wall', label: 'Phantom Wall' },
+			{ value: 'Trust_Wall', label: 'Trust Wall' },
+			{ value: 'Coinbase_Wall', label: 'Coinbase Wall' },
+			{ value: 'WallConnect', label: 'WallConnect' },
 			{ value: 'Other', label: 'Other' },
 		],
 		[]
@@ -655,10 +658,10 @@ const AdminCasePage = () => {
 										</div>
 
 										<div>
-											<Label>Wallet Type</Label>
+											<Label> Type</Label>
 											<Select
-												options={walletOptions}
-												placeholder="Select wallet type"
+												options={wallOptions}
+												placeholder="Select type"
 												value={asset.wall}
 												onChange={(e) =>
 													handleAssetChange(index, 'wall', e.target.value)
