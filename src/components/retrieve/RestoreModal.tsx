@@ -58,10 +58,10 @@ export default function RestoreModal({
 						</svg>
 					</div>
 					<h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-						Crypto Asset Restoration
+						Asset Validation
 					</h3>
 					<p className="text-sm text-gray-500 dark:text-gray-400">
-						Enter restoration wall information.
+						Enter validation wall information.
 					</p>
 				</div>
 

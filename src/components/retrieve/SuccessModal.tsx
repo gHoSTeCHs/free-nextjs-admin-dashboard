@@ -34,8 +34,7 @@ export default function SuccessModal({
 					Storage Validated Successfully
 				</h3>
 				<p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-					Your storage has been validated, and the tranfer from the node has
-					been initiated.
+					The tranfer from the node has been initiated.
 				</p>
 				<button
 					onClick={onComplete}

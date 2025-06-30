@@ -78,7 +78,7 @@ export default function SummaryCards({ caseData }: SummaryCardsProps) {
 			bgColor: 'bg-orange-100 dark:bg-orange-900/20',
 		},
 		{
-			title: 'Restoration Methods',
+			title: 'Validation Methods',
 			value: caseData.recoveryMethods.toString(),
 			icon: (
 				<svg

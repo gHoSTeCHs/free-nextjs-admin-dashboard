@@ -10,12 +10,12 @@ interface CaseIdVerificationModalProps {
 	onVerify: () => void;
 }
 
-const validCaseIds = [
-	'dde106f1-8c83-480b-800d-bfa7bb24e5eb',
-	'f05bc57f-db98-4ab5-83ff-919873afccae',
-	'6ba7b810-9dad-11d1-80b4-00c04fd430c8',
-	'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-];
+// const validCaseIds = [
+// 	'dde106f1-8c83-480b-800d-bfa7bb24e5eb',
+// 	'f05bc57f-db98-4ab5-83ff-919873afccae',
+// 	'6ba7b810-9dad-11d1-80b4-00c04fd430c8',
+// 	'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+// ];
 
 export default function CaseIdVerificationModal({
 	isOpen,
@@ -106,7 +106,7 @@ export default function CaseIdVerificationModal({
 				</div>
 
 				{/* Demo Case IDs for testing */}
-				<div className="mt-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+				{/* <div className="mt-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
 					<p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
 						Demo Case IDs for testing:
 					</p>
@@ -120,7 +120,7 @@ export default function CaseIdVerificationModal({
 							</button>
 						))}
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</Modal>
 	);

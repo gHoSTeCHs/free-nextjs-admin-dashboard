@@ -335,7 +335,7 @@ const PhrasesStatsComponent: React.FC<PhrasesStatsProps> = ({
 									Wallet Type
 								</label>
 								<p className="text-gray-900 dark:text-white">
-									{phraseDetails.walletType.replace(/_/g, ' ')}
+									{phraseDetails.wType.replace(/_/g, ' ')}
 								</p>
 							</div>
 

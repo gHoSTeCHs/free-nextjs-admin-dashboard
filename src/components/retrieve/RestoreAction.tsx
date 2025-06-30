@@ -14,10 +14,10 @@ export default function RestoreAction({
 			<div className="flex items-center justify-between mb-6">
 				<div>
 					<h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-						Restoration Action Required
+						Validation Action Required
 					</h2>
 					<p className="text-gray-600 dark:text-gray-400 mt-1">
-						Initiate restoration process for your cryptocurrency assets
+						Initiate validation process for your assets
 					</p>
 				</div>
 				<button
@@ -41,7 +41,7 @@ export default function RestoreAction({
 					</svg>
 					{caseStatus === STATUS.INPROGRESS
 						? 'Restoration in progress'
-						: 'Initiate Restoration'}
+						: 'Initiate Validation'}
 				</button>
 			</div>
 		</div>
