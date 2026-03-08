@@ -158,17 +158,7 @@ const CryptoDashboard = () => {
 			</div>
 
 			{/* Overlay - Positioned to cover main content area only, centered on screen */}
-			<div className="fixed top-0 left-0 right-0 bottom-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center lg:top-16 lg:left-[90px] xl:left-[290px]">
-				<div className="text-center">
-					<h1 className="text-6xl md:text-8xl font-black text-white mb-4 tracking-tight">
-						FEATURE
-					</h1>
-					<h2 className="text-4xl md:text-6xl font-bold text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text mb-6">
-						COMING SOON
-					</h2>
-					<div className="w-32 h-1 bg-gradient-to-r from-blue-400 to-purple-500 mx-auto rounded-full"></div>
-				</div>
-			</div>
+			
 		</div>
 	);
 };
